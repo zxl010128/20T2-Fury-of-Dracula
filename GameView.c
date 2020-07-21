@@ -22,27 +22,33 @@
 #define MAXIMUM_TRAP 3
 #define NOT_FIND     -100
 // TODO: ADD YOUR OWN STRUCTS HERE
+// add your own #includes here
+#define MAXIMUM_TRAP 3
+#define NOT_FIND	 -100
+// TODO: ADD YOUR OWN STRUCTS HERE
+
 typedef struct amateurVamp {
 	int born;
 	PlaceId bornCity;
-	struct amateurVamp *link;
+	struct amateurVamp *next;
 }*AmateurVamp;
 
-typedef struct PlayerInfo {
+typedef struct playerInfo {
 	Player ID;
 	int blood;
-	PlaceId current;
-	PlaceId history[TRAIL_SIZE];
-}PlayerInfo;
+	PlaceId current;			//current city
+	PlaceId history[TRAIL_SIZE];		//initialize NOWHERE
+	int historySize;
+}*PlayerInfo;
 
 typedef struct gameView {
 	int score;
-	int trap[MAXIMUM_TRAP];
+	int traps[MAXIMUM_TRAP];
 	AmateurVamp vamp;
 
 	Round round;
 	Map maps;
-	struct PlayerInfo players[NUM_PLAYERS];
+	struct playerInfo players[NUM_PLAYERS];
 	Player currentPlayer;
 }*GameView;
 
