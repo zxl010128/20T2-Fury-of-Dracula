@@ -248,11 +248,11 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 			// using fun to get new number of palces which distance via rail is 2
 			// fun will modify the rail_places array		 	
 			int result = addRailPlaces(0, rail_num, rail_places, gv);
-			int diff = rail_num;
+			int orig = rail_num;
 			rail_num = result;
 			// using fun to get new number of palces which distance via rail is 3	
 			// fun will modify the rail_places array			
-			rail_num = addRailPlaces(diff, rail_num, rail_places, gv);
+			rail_num = addRailPlaces(orig, rail_num, rail_places, gv);
 			// add the places(can move by rail) which distance via rail is 3
 			numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
 			for (int i = 0; i <= rail_num; i++) {
