@@ -22,10 +22,8 @@
 #define MAXIMUM_TRAP 3
 #define NOT_FIND     -100
 // TODO: ADD YOUR OWN STRUCTS HERE
-// add your own #includes here
-#define MAXIMUM_TRAP 3
-#define NOT_FIND	 -100
-// TODO: ADD YOUR OWN STRUCTS HERE
+
+int addRailPlaces(int start, int count_add, int *rail_places, GameView gv);
 
 typedef struct amateurVamp {
 	int born;
@@ -47,7 +45,7 @@ typedef struct gameView {
 	AmateurVamp vamp;
 
 	Round round;
-	Map maps;
+	Map gameMap;
 	struct playerInfo players[NUM_PLAYERS];
 	Player currentPlayer;
 }*GameView;
@@ -164,21 +162,288 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	// get a list which contains the adjacent places of 'from' 
+	ConnList adjacent = MapGetConnections(gv -> gameMap, from);
+	// count is the sum number of reachable places by any transport type
+	int count = 0;
+	// curr_one: using to loop count number
+	// curr_two: using to loop logging data
+	ConnList cur_one = adjacent;
+	ConnList cur_two = adjacent;
+	// road and boat part
+	int num_hunt = 0;
+	int num_drac = 0;
+	// count the number of places reachable by road  and boat that drac and hunt can get
+	while (cur_one != NULL && cur_one -> type != RAIL) {
+		if (cur_one -> p == ST_JOSEPH_AND_ST_MARY) {
+			num_hunt++;
+		} else {
+			num_hunt++;
+			num_drac++;
+		}		
+		cur_one = cur_one -> next;	
+	}
+	// logging the drac's reachable places
+	if (player == PLAYER_DRACULA) {
+		numReturnedLocs = malloc(num_drac * sizeof(int));
+		while (cur_two != NULL && cur_two -> type != RAIL) {
+			// expect the two hospitals
+			if (cur_two -> p == ST_JOSEPH_AND_ST_MARY) {
+				break;
+			}
+			numReturnedLocs[count] = cur_two -> p;
+			count++;
+			cur_two = cur_two -> next;
+		}
+	} 
+	// logging the hunt's reachable places 
+	else {
+		numReturnedLocs = malloc(num_hunt * sizeof(int));
+		while (cur_two != NULL && cur_two -> type != RAIL) {
+			numReturnedLocs[count] = cur_two -> p;
+			count++;
+			cur_two = cur_two -> next;
+		}
+		// rail part (hunters only)
+		// using current round to calculate how far the player can move by rail
+		int rail_times = (round + player) % 4;
+		// an array to collect the palces which can move by rail
+		int rail_places[NUM_REAL_PLACES];
+		// curr: using to loop count number
+		ConnList rail_cur = adjacent;
+		int rail_num = 0;
+		// collect the from's adjacent places(can move by rail) to rail_places array
+		while (rail_cur != NULL && rail_cur -> type == RAIL) {
+			rail_places[rail_num] = rail_cur -> p;
+			rail_num++;		
+			rail_cur = rail_cur -> next;	
+		}
+		// the hunter may not move by rail this turn
+		if (rail_times == 0) {
+			return numReturnedLocs;
+		}
+		// the maximum allowed distance via rail is 1
+		if (rail_times == 1) {
+			// add the from's adjacent places(can move by rail)
+			numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+			for (int i = 0; i <= rail_num; i++) {
+				numReturnedLocs[count] = rail_places[i];
+				count++;					
+			}
+		} 
+		// the maximum allowed distance via rail is 2
+		if (rail_times == 2) {
+			// using fun to get new number of palces which distance via rail is 2
+			// fun will modify the rail_places array
+			rail_num = addRailPlaces(0, rail_num, rail_places, gv);		
+			// add the places(can move by rail) which distance via rail is 2
+			numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+			for (int i = 0; i <= rail_num; i++) {
+				numReturnedLocs[count] = rail_places[i];
+				count++;					
+			}
+		}
+		// the maximum allowed distance via rail is 3
+		if (rail_times == 3) {
+			// using fun to get new number of palces which distance via rail is 2
+			// fun will modify the rail_places array		 	
+			int result = addRailPlaces(0, rail_num, rail_places, gv);
+			int diff = rail_num;
+			rail_num = result;
+			// using fun to get new number of palces which distance via rail is 3	
+			// fun will modify the rail_places array			
+			rail_num = addRailPlaces(diff, rail_num, rail_places, gv);
+			// add the places(can move by rail) which distance via rail is 3
+			numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+			for (int i = 0; i <= rail_num; i++) {
+				numReturnedLocs[count] = rail_places[i];
+				count++;					
+			}	
+		}	
+	}
+	return numReturnedLocs;
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               PlaceId from, bool road, bool rail,
                               bool boat, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	// get a list which contains the adjacent places of 'from' 
+	ConnList adjacent = MapGetConnections(gv -> gameMap, from);
+	// count is the sum number of reachable places by any transport type
+	int count = 0;
+	// transportType is road
+	if (road) {
+		// curr_one: using to loop count number
+		// curr_two: using to loop logging data
+		ConnList road_cur_one = adjacent;
+		ConnList road_cur_two = adjacent;
+		int road_num_hunt = 0;
+		int road_num_drac = 0;
+		// count the number of places reachable by road that drac and hunt can get
+		while (road_cur_one != NULL && road_cur_one -> type == ROAD) {
+			if (road_cur_one -> p == ST_JOSEPH_AND_ST_MARY) {
+				road_num_hunt++;
+			} else {
+				road_num_hunt++;
+				road_num_drac++;
+			}		
+		 	road_cur_one = road_cur_one -> next;	
+		}
+		// logging the drac's reachable places
+		if (player == PLAYER_DRACULA) {
+			numReturnedLocs = malloc((road_num_drac + 1) * sizeof(int));
+			while (road_cur_two != NULL && road_cur_two -> type == ROAD) {
+				// expect the two hospitals
+				if (road_cur_two -> p == ST_JOSEPH_AND_ST_MARY) {
+					break;
+				}
+				numReturnedLocs[count] = road_cur_two -> p;
+				count++;
+				road_cur_two = road_cur_two -> next;
+			}
+		}
+		// logging the hunt's reachable places 
+		else {
+			numReturnedLocs = malloc((road_num_drac + 1) * sizeof(int));
+			while (road_cur_two != NULL && road_cur_two -> type == ROAD) {
+				numReturnedLocs[count] = road_cur_two -> p;
+				count++;
+				road_cur_two = road_cur_two -> next;
+			}
+		}
+	}
+	// transportType is boat
+	if (boat) {
+		// curr_one: using to loop count number
+		// curr_two: using to loop logging data
+		ConnList boat_cur_one = adjacent;
+		ConnList boat_cur_two = adjacent;
+		int boat_num = 0;
+		// count the number of places reachable by road that drac and hunt can get
+		while (boat_cur_one != NULL && boat_cur_one -> type == BOAT) {
+			boat_num++;		
+		 	boat_cur_one = boat_cur_one -> next;	
+		}
+		// logging the drac's reachable places
+		if (player == PLAYER_DRACULA) {
+			numReturnedLocs = realloc(numReturnedLocs, (count + boat_num + 2) * sizeof(int));
+			while (boat_cur_two != NULL && boat_cur_two -> type == BOAT) {
+				numReturnedLocs[count] = boat_cur_two -> p;
+				count++;
+				boat_cur_two = boat_cur_two -> next;
+			}
+		}
+		// logging the hunt's reachable places 
+		else {
+			numReturnedLocs = realloc(numReturnedLocs, (count + boat_num + 2) * sizeof(int));
+			while (boat_cur_two != NULL && boat_cur_two -> type == BOAT) {
+				numReturnedLocs[count] = boat_cur_two -> p;
+				count++;
+				boat_cur_two = boat_cur_two -> next;
+			}
+		}
+	}
+	// transportType is rail
+	if (rail) {
+		// only consider the player is hunters
+		// drac can not have rail move
+		if (player != PLAYER_DRACULA) {
+			// using current round to calculate how far the player can move by rail
+			int rail_times = (round + player) % 4;
+			// an array to collect the palces which can move by rail
+			int rail_places[NUM_REAL_PLACES];
+			// curr: using to loop count number
+			ConnList rail_cur = adjacent;
+			int rail_num = 0;
+			// collect the from's adjacent places(can move by rail) to rail_places array
+			while (rail_cur != NULL && rail_cur -> type == RAIL) {
+				rail_places[rail_num] = rail_cur -> p;
+				rail_num++;		
+				rail_cur = rail_cur -> next;	
+			}
+			// the hunter may not move by rail this turn
+			if (rail_times == 0) {
+				return numReturnedLocs;
+			}
+			// the maximum allowed distance via rail is 1
+			if (rail_times == 1) {
+				// add the from's adjacent places(can move by rail)
+				numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+				for (int i = 0; i <= rail_num; i++) {
+					numReturnedLocs[count] = rail_places[i];
+					count++;					
+				}
+			} 
+			// the maximum allowed distance via rail is 2
+			if (rail_times == 2) {
+				// using fun to get new number of palces which distance via rail is 2
+				// fun will modify the rail_places array
+				rail_num = addRailPlaces(0, rail_num, rail_places, gv);		
+				// add the places(can move by rail) which distance via rail is 2
+				numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+				for (int i = 0; i <= rail_num; i++) {
+					numReturnedLocs[count] = rail_places[i];
+					count++;					
+				}
+			}
+			// the maximum allowed distance via rail is 3
+			if (rail_times == 3) {
+				// using fun to get new number of palces which distance via rail is 2
+				// fun will modify the rail_places array		 	
+				int result = addRailPlaces(0, rail_num, rail_places, gv);
+				int diff = rail_num;
+				rail_num = result;
+				// using fun to get new number of palces which distance via rail is 3	
+				// fun will modify the rail_places array			
+				rail_num = addRailPlaces(diff, rail_num, rail_places, gv);
+				// add the places(can move by rail) which distance via rail is 3
+				numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+				for (int i = 0; i <= rail_num; i++) {
+					numReturnedLocs[count] = rail_places[i];
+					count++;					
+				}	
+			}
+		} 
+		// drac is just return
+		else {
+			return numReturnedLocs;	
+		}
+	}
+	//	
+	return numReturnedLocs;
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
 // TODO
+// A function to add places(can move by rail) to a given array
+// this function will return a modify array and a count
+// will loop all list of places can move from the each places in given array
+// find the unique places(can move by rail) and add it.
+int addRailPlaces(int start, int count_add, int *array, GameView gv) {
+	int i = count_add;
+	while (i > start) {
+		ConnList current = MapGetConnections(gv -> gameMap, array[i]);
+		while (current != NULL && current -> type == RAIL) {
+			// check contain unique places
+			int check = 0;
+			bool iscontain = false;
+			while (check < count_add) {
+				if (current -> p == array[check]) {
+					iscontain = true;
+				}
+				check++;
+			}
+			// if didn't found, adding it
+			if (!iscontain)	{
+				count_add++;
+				array[count_add] = current -> p;
+			}	
+			current = current -> next;
+		}
+		i--;
+	}
+	return count_add;
+}  
