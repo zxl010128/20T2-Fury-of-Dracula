@@ -161,7 +161,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
-{
+{	
 	// get a list which contains the adjacent places of 'from' 
 	ConnList adjacent = MapGetConnections(gv -> gameMap, from);
 	// count is the sum number of reachable places by any transport type
@@ -171,21 +171,23 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 	ConnList cur_one = adjacent;
 	ConnList cur_two = adjacent;
 	// road and boat part
-	int num_hunt = 0;
-	int num_drac = 0;
+	int road_boat_num = 0;
+	bool isContainHospital = false;
 	// count the number of places reachable by road  and boat that drac and hunt can get
 	while (cur_one != NULL && cur_one -> type != RAIL) {
 		if (cur_one -> p == ST_JOSEPH_AND_ST_MARY) {
-			num_hunt++;
-		} else {
-			num_hunt++;
-			num_drac++;
-		}		
+			isContainHospital = true;
+		}
+		road_boat_num++;
 		cur_one = cur_one -> next;	
 	}
 	// logging the drac's reachable places
 	if (player == PLAYER_DRACULA) {
-		numReturnedLocs = malloc(num_drac * sizeof(int));
+		if (isContainHospital) {
+			numReturnedLocs = malloc((road_boat_num - 1) * sizeof(int));
+		} else {
+			numReturnedLocs = malloc(road_boat_num * sizeof(int));
+		}
 		while (cur_two != NULL && cur_two -> type != RAIL) {
 			// expect the two hospitals
 			if (cur_two -> p == ST_JOSEPH_AND_ST_MARY) {
@@ -198,7 +200,7 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 	} 
 	// logging the hunt's reachable places 
 	else {
-		numReturnedLocs = malloc(num_hunt * sizeof(int));
+		numReturnedLocs = malloc(road_boat_num * sizeof(int));
 		while (cur_two != NULL && cur_two -> type != RAIL) {
 			numReturnedLocs[count] = cur_two -> p;
 			count++;
@@ -225,7 +227,7 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 		// the maximum allowed distance via rail is 1
 		if (rail_times == 1) {
 			// add the from's adjacent places(can move by rail)
-			numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+			numReturnedLocs = realloc(numReturnedLocs, (count + rail_num) * sizeof(int));
 			for (int i = 0; i <= rail_num; i++) {
 				numReturnedLocs[count] = rail_places[i];
 				count++;					
@@ -237,7 +239,7 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 			// fun will modify the rail_places array
 			rail_num = addRailPlaces(0, rail_num, rail_places, gv);		
 			// add the places(can move by rail) which distance via rail is 2
-			numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+			numReturnedLocs = realloc(numReturnedLocs, (count + rail_num) * sizeof(int));
 			for (int i = 0; i <= rail_num; i++) {
 				numReturnedLocs[count] = rail_places[i];
 				count++;					
@@ -254,7 +256,7 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 			// fun will modify the rail_places array			
 			rail_num = addRailPlaces(orig, rail_num, rail_places, gv);
 			// add the places(can move by rail) which distance via rail is 3
-			numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+			numReturnedLocs = realloc(numReturnedLocs, (count + rail_num) * sizeof(int));
 			for (int i = 0; i <= rail_num; i++) {
 				numReturnedLocs[count] = rail_places[i];
 				count++;					
@@ -278,21 +280,23 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 		// curr_two: using to loop logging data
 		ConnList road_cur_one = adjacent;
 		ConnList road_cur_two = adjacent;
-		int road_num_hunt = 0;
-		int road_num_drac = 0;
+		bool isContainHospital = false;
+		int road_num = 0;
 		// count the number of places reachable by road that drac and hunt can get
 		while (road_cur_one != NULL && road_cur_one -> type == ROAD) {
 			if (road_cur_one -> p == ST_JOSEPH_AND_ST_MARY) {
-				road_num_hunt++;
-			} else {
-				road_num_hunt++;
-				road_num_drac++;
-			}		
+				isContainHospital = true;
+			} 
+			road_num++;	
 		 	road_cur_one = road_cur_one -> next;	
 		}
 		// logging the drac's reachable places
 		if (player == PLAYER_DRACULA) {
-			numReturnedLocs = malloc((road_num_drac + 1) * sizeof(int));
+			if (isContainHospital) {
+				numReturnedLocs = malloc((road_num - 1) * sizeof(int));
+			} else {
+				numReturnedLocs = malloc(road_num * sizeof(int));
+			}
 			while (road_cur_two != NULL && road_cur_two -> type == ROAD) {
 				// expect the two hospitals
 				if (road_cur_two -> p == ST_JOSEPH_AND_ST_MARY) {
@@ -305,7 +309,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 		}
 		// logging the hunt's reachable places 
 		else {
-			numReturnedLocs = malloc((road_num_drac + 1) * sizeof(int));
+			numReturnedLocs = malloc(road_num * sizeof(int));
 			while (road_cur_two != NULL && road_cur_two -> type == ROAD) {
 				numReturnedLocs[count] = road_cur_two -> p;
 				count++;
@@ -327,7 +331,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 		}
 		// logging the drac's reachable places
 		if (player == PLAYER_DRACULA) {
-			numReturnedLocs = realloc(numReturnedLocs, (count + boat_num + 2) * sizeof(int));
+			numReturnedLocs = realloc(numReturnedLocs, (count + boat_num) * sizeof(int));
 			while (boat_cur_two != NULL && boat_cur_two -> type == BOAT) {
 				numReturnedLocs[count] = boat_cur_two -> p;
 				count++;
@@ -336,7 +340,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 		}
 		// logging the hunt's reachable places 
 		else {
-			numReturnedLocs = realloc(numReturnedLocs, (count + boat_num + 2) * sizeof(int));
+			numReturnedLocs = realloc(numReturnedLocs, (count + boat_num) * sizeof(int));
 			while (boat_cur_two != NULL && boat_cur_two -> type == BOAT) {
 				numReturnedLocs[count] = boat_cur_two -> p;
 				count++;
@@ -369,7 +373,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 			// the maximum allowed distance via rail is 1
 			if (rail_times == 1) {
 				// add the from's adjacent places(can move by rail)
-				numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+				numReturnedLocs = realloc(numReturnedLocs, (count + rail_num) * sizeof(int));
 				for (int i = 0; i <= rail_num; i++) {
 					numReturnedLocs[count] = rail_places[i];
 					count++;					
@@ -381,7 +385,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 				// fun will modify the rail_places array
 				rail_num = addRailPlaces(0, rail_num, rail_places, gv);		
 				// add the places(can move by rail) which distance via rail is 2
-				numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+				numReturnedLocs = realloc(numReturnedLocs, (count + rail_num) * sizeof(int));
 				for (int i = 0; i <= rail_num; i++) {
 					numReturnedLocs[count] = rail_places[i];
 					count++;					
@@ -398,7 +402,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 				// fun will modify the rail_places array			
 				rail_num = addRailPlaces(orig, rail_num, rail_places, gv);
 				// add the places(can move by rail) which distance via rail is 3
-				numReturnedLocs = realloc(numReturnedLocs, (count + rail_num + 2) * sizeof(int));
+				numReturnedLocs = realloc(numReturnedLocs, (count + rail_num) * sizeof(int));
 				for (int i = 0; i <= rail_num; i++) {
 					numReturnedLocs[count] = rail_places[i];
 					count++;					
@@ -446,4 +450,4 @@ int addRailPlaces(int start, int count_add, int *array, GameView gv) {
 		i--;
 	}
 	return count_add;
-}  
+} 
