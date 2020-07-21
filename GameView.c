@@ -19,12 +19,32 @@
 #include "Map.h"
 #include "Places.h"
 // add your own #includes here
-
+#define MAXIMUM_TRAP 3
+#define NOT_FIND     -100
 // TODO: ADD YOUR OWN STRUCTS HERE
+typedef struct amateurVamp {
+	int born;
+	PlaceId bornCity;
+	struct amateurVamp *link;
+}*AmateurVamp;
 
-struct gameView {
-	// TODO: ADD FIELDS HERE
-};
+typedef struct PlayerInfo {
+	Player ID;
+	int blood;
+	PlaceId current;
+	PlaceId history[TRAIL_SIZE];
+}PlayerInfo;
+
+typedef struct gameView {
+	int score;
+	int trap[MAXIMUM_TRAP];
+	AmateurVamp vamp;
+
+	Round round;
+	Map maps;
+	struct PlayerInfo players[NUM_PLAYERS];
+	Player currentPlayer;
+}*GameView;
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
