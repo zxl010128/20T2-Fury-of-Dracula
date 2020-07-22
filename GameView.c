@@ -19,35 +19,48 @@
 #include "Map.h"
 #include "Places.h"
 // add your own #includes here
+// add your own #defines here
 #define MAXIMUM_TRAP 3
-#define NOT_FIND     -100
-// TODO: ADD YOUR OWN STRUCTS HERE
+#define MAXIMUM_CITY 128
 
 int addRailPlaces(int start, int count_add, int *rail_places, GameView gv);
 
+// TODO: ADD YOUR OWN STRUCTS HERE
 typedef struct amateurVamp {
-	int born;
-	PlaceId bornCity;
-	struct amateurVamp *next;
+	int born;						
+	PlaceId bornCity;					//Initialize the born city by no vamp
 }*AmateurVamp;
 
+//Information of the players
 typedef struct playerInfo {
 	Player ID;
 	int blood;
-	PlaceId current;			//current city
-	PlaceId history[TRAIL_SIZE];		//initialize NOWHERE
-	int historySize;
+	PlaceId current;					//current city
+	PlaceId move;						//The last move
+
+	PlaceId locHistory[TRAIL_SIZE];				//Initialize the location history with NOWHERE
+								//Must be a city
+	
+	PlaceId history[TRAIL_SIZE];				//Initialize the move history with NOWHERE 
+								//Can  be a city or other places
 }*PlayerInfo;
+
+//Type of the trap
+typedef enum trapType
+{
+	TRAP_NULL,						//0 forno trap
+	TRAP_SET,						//1 for has trap
+}*TrapType;
 
 typedef struct gameView {
 	int score;
-	int traps[MAXIMUM_TRAP];
-	AmateurVamp vamp;
+	enum trapType traps[MAXIMUM_CITY][MAXIMUM_TRAP];	//At most 3 trap each city
+	struct amateurVamp vamp;				//Ther will be only one amateur vamp
 
-	Round round;
-	Map gameMap;
-	struct playerInfo players[NUM_PLAYERS];
-	Player currentPlayer;
+	Round round;						//round number of the game
+	Map m;
+	struct playerInfo players[NUM_PLAYERS];			// Player list
+	Player currentPlayer;					// The current player
 }*GameView;
 
 ////////////////////////////////////////////////////////////////////////
