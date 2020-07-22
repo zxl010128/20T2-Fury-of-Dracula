@@ -228,7 +228,7 @@ int main(void)
 			"GSZ.... SGE.... HGE.... MGE.... DC?T... "
 			"GSZ.... SGE.... HGE....";
 		
-		Message messages[15] = {};
+		Message messages[18] = {};
 		HunterView hv = HvNew(trail, messages);
 		
 		assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
