@@ -24,6 +24,8 @@
 #define MAXIMUM_CITY 128
 
 int addRailPlaces(int start, int count_add, int *rail_places, GameView gv);
+int GvGetTotalMoves(GameView gv, player Player);
+int GvGetTotalLocations(GameView gv, player Player);
 
 // TODO: ADD YOUR OWN STRUCTS HERE
 typedef struct amateurVamp {
@@ -473,3 +475,27 @@ int addRailPlaces(int start, int count_add, int *array, GameView gv) {
 	}
 	return count_add;
 } 
+
+// Count the number of moves of the given player
+int GvGetTotalMoves(GameView gv, player Player) {
+    
+    int num = 0;
+    for (int i = 0; i < TRAIL_SIZE, i++) {
+        if(gv->players[player].history[i] != NOWHERE){
+            num++;
+        }
+    }
+    return num;
+}
+
+// Count the number of locations of the given player
+int GvGetTotalLocations(GameView gv, player Player) {
+    
+    int num = 0;
+    for (int i = 0; i < TRAIL_SIZE, i++) {
+        if(gv->players[player].locHistory[i] != NOWHERE){
+            num++;
+        }
+    }
+    return num;
+}
