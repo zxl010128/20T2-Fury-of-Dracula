@@ -45,20 +45,29 @@ typedef struct playerInfo {
 								//Can  be a city or other places
 }*PlayerInfo;
 
-//Type of the trap
-typedef enum trapType
+//Type of the encounter
+typedef enum encounterType
 {
-	TRAP_NULL,						//0 forno trap
-	TRAP_SET,						//1 for has trap
-}*TrapType;
+	EncounterNull,						//nothing
+	EncounterTrap,						//trap
+	EncounterVampire,					//vamp
+}*EncounterType;
+
+//Encounter information
+typedef struct encounterInfo
+{
+	enum encounterType type;				//encounter type
+	int value;						//Durability
+	int city;						//Incident City
+}*EncounterInfo;
 
 typedef struct gameView {
 	int score;
-	enum trapType traps[MAXIMUM_CITY][MAXIMUM_TRAP];	//At most 3 trap each city
+	struct encounterInfo encounters[MAXIMUM_CITY][MAXIMUM_TRAP];	//At most 3 trap each city
 	struct amateurVamp vamp;				//Ther will be only one amateur vamp
 
 	Round round;						//round number of the game
-	Map m;
+	Map gameMap;
 	struct playerInfo players[NUM_PLAYERS];			// Player list
 	Player currentPlayer;					// The current player
 }*GameView;
