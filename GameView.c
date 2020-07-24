@@ -738,9 +738,9 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 
 	for (int i = 0; i < MAXIMUM_CITY; i++) {
 		ev = gv->encounters[i];
-		for (int j = 0, j < MAXIMUM_TRAP, j++) {
+		for (int j = 0; j < MAXIMUM_TRAP; j++) {
 			if (ev[j].type == EncounterTrap) {
-				p[num] = i;
+				trap[num] = i;
 				num++; 
 			}
 		}
