@@ -767,7 +767,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
         (*numReturnedMoves)++;
     }
     
-    moveHistory[moveTimes] = gv->playes[player].move;
+    moveHistory[moveTimes] = gv->players[player].move;
     (*numReturnedMoves)++;
     *canFree = true
 
@@ -794,7 +794,7 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
         (*numReturnedMoves)++;
     }
     
-    moveHistory[*numReturnedMoves] = gv->playes[player].move;
+    moveHistory[*numReturnedMoves] = gv->players[player].move;
     (*numReturnedMoves)++;
     *canFree = true;
     
@@ -821,7 +821,7 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
         (*numReturnedLocs)++;
     }
     
-    locationHistory[moveTimes] = gv->playes[player].current;
+    locationHistory[moveTimes] = gv->players[player].current;
     (*numReturnedLocs)++;
     *canFree = true
 
@@ -848,7 +848,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
         (*numReturnedLocs)++;
     }
 
-    locationHistory[*numReturnedLocs] = gv->playes[player].current;
+    locationHistory[*numReturnedLocs] = gv->players[player].current;
     (*numReturnedLocs)++;
     *canFree = true;
 	return locationHistory;
