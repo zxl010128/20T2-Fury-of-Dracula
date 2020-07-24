@@ -22,7 +22,7 @@
 // add your own #includes here
 #define MAXIMUM_TRAP 3
 #define NOT_FIND	 -100
-#define MAXIMUM_CITY 128	//最大城市数量
+#define MAXIMUM_CITY 128	//maximum city num
 
 int GvGetTotalLocations(GameView gv, Player player);
 int GvGetTotalMoves(GameView gv, Player player);
@@ -31,71 +31,66 @@ int addRailPlaces(int start, int count_add, int *array, GameView gv);
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 typedef struct amateurVamp { 
-	int born;						//成长值0幼年 1成年
-	PlaceId bornCity;				//出生城市 初始化NOWHERE 代表没有吸血鬼
+	int born;					
+	PlaceId bornCity;				//Initialize the born city by no vamp
 }*AmateurVamp;
 
-//玩家信息
+//Information of the players
 typedef struct playerInfo {
 	Player ID;
 	int blood;
-	PlaceId current;				//当前城市
-	PlaceId locHistory[TRAIL_SIZE];	//位置历史 初始化NOWHERE 位置信息必须是确定的城市
-	PlaceId move;					//最后一次移动
-	PlaceId history[TRAIL_SIZE];	//移动历史 初始化NOWHERE 移动可以是城市也可以是other places的代码
+	PlaceId current;				//Current city
+	PlaceId move;					//The last move
+	PlaceId locHistory[TRAIL_SIZE];			//Initialize the location history with NOWHERE
+							//Must be a city
+	PlaceId history[TRAIL_SIZE];			//Initialize the move history with NOWHERE
+							//Can be a city or other places
 }*PlayerInfo;
 
-//遭遇类型
+//Encounter type
 typedef enum encounterType
 {
-	EncounterNull,		//无遭遇
-	EncounterTrap,		//陷阱
-	EncounterVampire,	//吸血鬼
+	EncounterNull,					//nothing
+	EncounterTrap,					//trap
+	EncounterVampire,				//vamp
 }*EncounterType;
 
-//遭遇结构体
+//Encounter struct
 typedef struct encounterInfo
 {
-	enum encounterType type;	//遭遇类型
-	int value;					//数值，陷阱（耐久值）
-	int city;					//事发城市
+	enum encounterType type;			//Encounter type
+	int value;					//Durability
+	int city;					//Incident City
 }*EncounterInfo;
 
 typedef struct gameView {
 	int score;
-	struct encounterInfo encounters[MAXIMUM_CITY][MAXIMUM_TRAP];	//遭遇，每个城市最多3个
-	struct amateurVamp vamp;		//吸血鬼，只有一个
+	struct encounterInfo encounters[MAXIMUM_CITY][MAXIMUM_TRAP];	//Encounters up to 3 per city
+	struct amateurVamp vamp;			//There will be only one amateur vamp(Sorry for the chinglish)
 
-	Round round;	//游戏回合数
+	Round round;					//round number of the game
 	Map gameMap;
-	struct playerInfo players[NUM_PLAYERS];	//玩家列表
-	Player currentPlayer;	//当前玩家
+	struct playerInfo players[NUM_PLAYERS];		//Player list
+	Player currentPlayer;				//Current player
 }*GameView;
 
 //
-// 全局函数
+//Global function
 //
-
-//这个没写，你们可以完善，事件输出用的都是printf
-void GvEvent(Player id, const char* event, PlaceId city)
-{
-	//print(PlayerName(id), event, CityName(city))....
-}
-
-//获得区域类型的名字
+//Get the name of the area type(for debugging)
 const char* GetPlaceTypeName(PlaceType type)
 {
 	switch(type){
 	case SEA:
-		return "海域";
+		return "sea";
 	case LAND:
-		return "陆地";
+		return "land";
 	default:
-		return "未知地面类型";
+		return "unkown area type";
 	}
 }
 
-//遭遇事件结构体初始化
+//Encountered event initialization
 void EcInit(EncounterInfo ev)
 {
 	ev->type = EncounterNull;
@@ -104,10 +99,10 @@ void EcInit(EncounterInfo ev)
 }
 
 //
-// Player操作函数
+// Player helper function
 //
 
-//初始化玩家
+//Initialize the player
 void GvInitPlayer(GameView gv, Player ID)
 {
 	PlayerInfo player = &gv->players[ID];
@@ -131,7 +126,7 @@ void GvInitPlayer(GameView gv, Player ID)
 	player->move = NOWHERE;
 }
 
-//玩家名字
+//Get player name
 const char* PlayerName(Player id)
 {
 	switch(id){
@@ -150,7 +145,7 @@ const char* PlayerName(Player id)
 	}
 }
 
-//解析玩家类型
+//Analyze player types
 Player NameToPlayer(char ch)
 {
 	switch(ch){
@@ -169,7 +164,7 @@ Player NameToPlayer(char ch)
 	}
 }
 
-//解析城市，2个字符
+//Parse city into 2 characters
 void GetCity(char *buf, char *msg)
 {
 	buf[0] = msg[1];
@@ -178,21 +173,21 @@ void GetCity(char *buf, char *msg)
 }
 
 //
-// GameView操作函数
+// GameView hlper function
 //
 
-//三个判断游戏输赢的函数
+//Three functions for judging game winning or losing
 void GvOnHitHunter(GameView gv, Player id);
 void GvOnHitDracula(GameView gv);
 void GvChangeScore(GameView gv, int n);
 
-//设置当前player
+//Set current player
 void GvSetPlayer(GameView gv, Player id)
 {
 	gv->currentPlayer = id;
 }
 
-//添加一个移动指令历史记录，6个缓存+当前=7个
+//Add a move order history
 void GvAddHistory(PlayerInfo player, PlaceId city)
 {
 	for(int i=TRAIL_SIZE-1; i > 0; --i){
@@ -201,39 +196,16 @@ void GvAddHistory(PlayerInfo player, PlaceId city)
 	player->history[0] = city;
 }
 
-//添加一个位置历史记录，这个代码上没有表现最大多少个，6个够用
+//Add a location history
 void GvAddLocationHistory(GameView gv, PlayerInfo player, PlaceId city)
 {
-	#if 0
-	//德古拉移动6步，6步之外的陷阱全部移除
-	if(player->ID == PLAYER_DRACULA){
-		PlaceId trapCity = player->locHistory[TRAIL_SIZE - 1];//最后一步，要移除的城市
-		bool canRemove = true;
-		//如果有相同的城市，不能移除陷阱
-		if(trapCity == city)canRemove = false;
-		for(int i=0; i<TRAIL_SIZE-1; ++i){
-			if(trapCity == player->locHistory[i]){
-				canRemove = false;
-			}
-		}
-
-		if(canRemove){//判断需要移除陷阱
-			for(int i=0; i<MAXIMUM_TRAP; ++i){//查看城市是否有需要移除的陷阱，移除
-				if(gv->encounters[trapCity][i].type == EncounterTrap){
-					EcInit(&gv->encounters[trapCity][i]);//移除
-				}
-			}
-		}
-	}
-	#endif
-
 	for(int i=TRAIL_SIZE-1; i > 0; --i){
 		player->locHistory[i] = player->locHistory[i-1];
 	}
 	player->locHistory[0] = player->current;
 }
 
-//统计移动指令历史记录大小
+//Count the size of the movement order history
 int GvTotalHistorys(GameView gv, Player player)
 {
 	int n = 0;
@@ -245,7 +217,7 @@ int GvTotalHistorys(GameView gv, Player player)
 	return n;
 }
 
-//统计位置历史记录大小
+//Count the size of location history
 int GvTotalLocationHistorys(GameView gv, Player player)
 {
 	int n = 0;
@@ -258,24 +230,24 @@ int GvTotalLocationHistorys(GameView gv, Player player)
 	return n;
 }
 
-//玩家修养事件
+//Player recuperation event
 void GvPlayerRest(GameView gv, PlayerInfo player)
 {
-	if(player->ID == PLAYER_DRACULA){//德古拉修养
-		if(placeIdToType(player->current) == SEA){//test6泡在水里
+	if(player->ID == PLAYER_DRACULA){//Dracula gets rest
+		if(placeIdToType(player->current) == SEA){//In the water
 			player->blood -= LIFE_LOSS_SEA;
 			printf("    %-10s  受到海水的侵蚀，生命值减少了 %d。\n", PlayerName(player->ID), LIFE_LOSS_SEA);
-			GvOnHitDracula(gv);//德古拉受伤事件
+			GvOnHitDracula(gv);//Dracula hurts~
 		}
-		else if(player->current == CASTLE_DRACULA){//城堡中修养
+		else if(player->current == CASTLE_DRACULA){//Rest in castle
 			player->blood += LIFE_GAIN_CASTLE_DRACULA;
 			printf("    %-10s  在舒适的城堡里得到了修养，生命值增加了 %d，当前生命 %d。\n", 
 				PlayerName(player->ID), LIFE_GAIN_CASTLE_DRACULA, player->blood);
 		}
 	}
-	else{//猎人修养
+	else{//Hunter gets rest
 		player->blood += LIFE_GAIN_REST;
-		//最大生命封顶
+		//Maximum HP cap
 		if(player->blood > GAME_START_HUNTER_LIFE_POINTS)player->blood = GAME_START_HUNTER_LIFE_POINTS;
 		printf("    %-10s  停留在 %s 得到了修养，生命值增加了 %d，当前生命 %d/%d。\n",
 			PlayerName(player->ID), placeIdToName(player->current),
@@ -283,7 +255,7 @@ void GvPlayerRest(GameView gv, PlayerInfo player)
 	}
 }
 
-//传送玩家，不做任何判断的移动。传送。
+//Teleport the player without making any judgmental moves.
 void GvMovePlayer(GameView gv, Player id, PlaceId city)
 {
 	PlayerInfo player = &gv->players[id];
@@ -292,7 +264,7 @@ void GvMovePlayer(GameView gv, Player id, PlaceId city)
 	//printf("    %-10s  来到了  %s\n", PlayerName(player->ID), placeIdToName(city));
 }
 
-//移动玩家，处理移动事件
+//Move players, handle moving events
 void GvMove(GameView gv, PlaceId city)
 {
 	PlayerInfo player = &gv->players[gv->currentPlayer];
@@ -301,41 +273,41 @@ void GvMove(GameView gv, PlaceId city)
 	switch(city){
 	//case CITY_UNKNOWN:
 	//case SEA_UNKNOWN:
-	case HIDE:	//隐藏行踪，首次出现test9
+	case HIDE:	//hide
 		GvAddHistory(player, player->move);
-		GvAddLocationHistory(gv, player, player->current);//这可能是在地图上显示的虚假信息
+		GvAddLocationHistory(gv, player, player->current);
 		//player->current = UNKNOWN_PLACE;
 		player->move = city;
 		
 		printf("    %-10s  隐藏了自己的行踪。\n", PlayerName(player->ID));
 
 		break;
-	case DOUBLE_BACK_1:	//后退
+	case DOUBLE_BACK_1:	
 	case DOUBLE_BACK_2:
 	case DOUBLE_BACK_3:
 	case DOUBLE_BACK_4:
-	case DOUBLE_BACK_5://test6?
+	case DOUBLE_BACK_5:
 		n = city - DOUBLE_BACK_1;
-		if(n > 0){//后退
-			GvAddHistory(player, player->move);	//记录历史信息
+		if(n > 0){
+			GvAddHistory(player, player->move);	//Record historical information
 			player->current = player->history[n - 0];
 			player->move = city;
 			GvAddLocationHistory(gv, player, player->current);
 		}
-		else{//n==0，后退一步，原地不动，这个testGameView也没用提现
-			GvAddLocationHistory(gv, player, player->current);//所以这个历史记录也不确定是否需要
+		else{
+			GvAddLocationHistory(gv, player, player->current);
 		}
 
-		//事件描述
+		//Event description
 		printf("    %-10s  后退%d步，来到了  %s\n", PlayerName(player->ID), n+1, placeIdToName(player->current));
 		//printf("%s\n", GetPlaceTypeName(placeIdToType(player->current)));
 		if(player->ID == PLAYER_DRACULA){
-			//水域检测
+			//Water detection
 			GvPlayerRest(gv, player);
 		}
 	
 		break;
-	case TELEPORT://瞬移，testGaveView里面没用到，正确性不确定
+	case TELEPORT:
 		GvAddHistory(player, city);
 		player->current = city;
 		printf("    %-10s  施展时空法术，传送到了  %s\n", PlayerName(player->ID), placeIdToName(city));
@@ -343,21 +315,21 @@ void GvMove(GameView gv, PlaceId city)
 	case UNKNOWN_PLACE:
 	case NOWHERE:
 		break;
-	default://普通移动
-		GvAddHistory(player, player->move);	//先记录上步移动方式
-		last = player->current;	//记录上次移动城市
-		player->current = city;	//设置属性
+	default:					//Ordinary move
+		GvAddHistory(player, player->move);	//Record the previous move method first
+		last = player->current;			//Record the last moved city
+		player->current = city;			
 		player->move = city;
-		GvAddLocationHistory(gv, player, city);	//记录本次移动的位置
+		GvAddLocationHistory(gv, player, city);	//Record the location of this move
 
-		//if(player->ID == PLAYER_DRACULA){	//猎人移动事件
+		//if(player->ID == PLAYER_DRACULA){	//Hunter move event
 			printf("    %-10s  来到了  %s\n", PlayerName(player->ID), placeIdToName(city));
 		//}
-		if(player->ID == PLAYER_DRACULA){//test10 德古拉移动事件
+		if(player->ID == PLAYER_DRACULA){	//Dracula moving event
 			GvPlayerRest(gv, player);
 		}
 		else{
-			if(last == city){//和上次的城市相同，修养恢复生命
+			if(last == city){		//Same as last time, rest and restore life
 				GvPlayerRest(gv, player);
 			}
 		}
@@ -366,30 +338,30 @@ void GvMove(GameView gv, PlaceId city)
 }
 
 //
-// 吸血鬼函数
+// vamp helper function
 //
 
-//添加吸血鬼，现在占据城市的一个事件位
+//Add vampire, now occupying an event slot in the city
 bool GvAddVampire(GameView gv, PlaceId city)
 {
 	EncounterInfo ev = gv->encounters[(int)city];
 	for(int i=0; i<MAXIMUM_TRAP; ++i){
-		if(ev[i].type == EncounterNull){//空事件位
+		if(ev[i].type == EncounterNull){	//Empty event
 			ev[i].type = EncounterVampire;
 			gv->vamp.born = 0;
 			gv->vamp.bornCity = city;
 			return true;
 		}
 	}
-	return false;//放置失败
+	return false;					//Fail to place
 }
 
-//移除吸血鬼
+//Remove Vampire
 bool GvRemoveVampire(GameView gv)
 {
 	if(gv->vamp.bornCity != NOWHERE){
 		EncounterInfo ev = gv->encounters[(int)gv->vamp.bornCity];
-		for(int i=0; i<MAXIMUM_TRAP; ++i){//清理事件位
+		for(int i=0; i<MAXIMUM_TRAP; ++i){	//Clean event
 			if(ev[i].type == EncounterVampire){
 				ev[i].type = EncounterNull;
 			}
@@ -401,46 +373,46 @@ bool GvRemoveVampire(GameView gv)
 	return false;
 }
 
-//test13 吸血鬼成长事件，遍历所有吸血鬼，增加成长值
+//Vampire growth event, traverse all vampires, increase growth value
 void GvVampireProc(GameView gv)
 {
 	if(gv->vamp.bornCity != NOWHERE){
-		gv->vamp.born++;//增加成长值
-		//test13 成年，飞走
-		if(gv->vamp.born >= 6){//6回合成熟
+		gv->vamp.born++;			//Increase growth value
+		//Mateur, fly away
+		if(gv->vamp.born >= 6){			//6 rounds mature
 			printf("    %-10s  在      %10s 成长成了成年吸血鬼，失去分数：%d\n", "吸血鬼",
 				placeIdToName(gv->vamp.bornCity), SCORE_LOSS_VAMPIRE_MATURES);
-			GvRemoveVampire(gv);	//移除吸血鬼
+			GvRemoveVampire(gv);		//Remove vampire
 			GvChangeScore(gv, -SCORE_LOSS_VAMPIRE_MATURES);
 		}
 	}
 }
 
 //
-// 陷阱类函数，最大设置的是3个
+// Trap helper functions, the maximum setting is 3
 //
 
-//放置陷阱
+//Place the trap
 bool GvPushTrap(GameView gv, PlaceId city)
 {
 	EncounterInfo ev = gv->encounters[(int)city];
 	for(int i=0; i<MAXIMUM_TRAP; ++i){
-		if(ev[i].type == EncounterNull){//空事件位
+		if(ev[i].type == EncounterNull){	//Empty event
 			ev[i].type = EncounterTrap;
-			ev[i].value = 6;	//6回合之后报废
+			ev[i].value = 6;		//Scrap after 6 rounds
 			ev[i].city = city;
 			return true;
 		}
 	}
-	return false;//放置失败
+	return false;					//Placement failed
 }
 
-//拆除陷阱test12
+//Remove the trap
 bool GvRemoveTrap(GameView gv, PlaceId city)
 {
 	EncounterInfo ev = gv->encounters[(int)city];
 	for(int i=0; i<MAXIMUM_TRAP; ++i){
-		if(ev[i].type == EncounterTrap){//找到第一个陷阱
+		if(ev[i].type == EncounterTrap){	//Find the first trap
 			EcInit(&ev[i]);
 			return true;
 		}
@@ -448,7 +420,7 @@ bool GvRemoveTrap(GameView gv, PlaceId city)
 	return false;
 }
 
-//陷阱的回合处理，这个根据耐久度处理，可以删掉
+//Trap round processing, this is based on durability and can be deleted
 void GvTrapProc(GameView gv)
 {
 	//遍历所有城市所有陷阱，耐久值-1
@@ -468,19 +440,20 @@ void GvTrapProc(GameView gv)
 }
 
 //
-//当玩家受伤时触发这个事件，判断游戏是否胜利或失败
+//This event is triggered when the player is injured 
+// to determine whether the game is won or lost.
 //
 
-//猎人受到攻击
+//Hunter under attack
 void GvOnHitHunter(GameView gv, Player id)
 {
 	PlayerInfo player = &gv->players[id];
-	//猎人没有挂
+	//The hunter is not dead
 	if(gv->players[id].blood > 0){
 		return ;
 	}
 
-	//猎人挂了
+	//The hunter is dead
 	player->blood = 0;
 	GvChangeScore(gv, -SCORE_LOSS_HUNTER_HOSPITAL);
 	printf("    经过惨烈的战斗，%-10s 身受重伤。\n", PlayerName(id));
@@ -488,7 +461,8 @@ void GvOnHitHunter(GameView gv, Player id)
 	printf("    %-10s 被送往 %s\n", PlayerName(id), placeIdToName(HOSPITAL_PLACE));
 	printf("    游戏当前分数：%d\n", gv->score);
 
-	//统计死亡的玩家，如果全部死亡，判断德古拉胜利
+	//Count the dead players
+	//if all of them die, judge Dracula to win
 	int n = 0;
 	for(int i=0; i<NUM_PLAYERS-1; ++i){
 		if(gv->players[i].blood <= 0){
@@ -500,18 +474,20 @@ void GvOnHitHunter(GameView gv, Player id)
 	}
 }
 
-//德古拉受到攻击
+//Dracula under attack
 void GvOnHitDracula(GameView gv)
 {
 	PlayerInfo player = &gv->players[PLAYER_DRACULA];
-	if(player->ID == PLAYER_DRACULA){//德古拉
+	if(player->ID == PLAYER_DRACULA){
 		if(player->blood <= 0){
 			printf("    %-10s 被打败了，猎人们获得了胜利！\n", PlayerName(PLAYER_DRACULA));
 		}
 	}
 }
 
-//游戏分数改变，如果n是负值，判断游戏分数是否小于0，游戏是否结束
+//The game score changes. 
+//If n is a negative value, determine 
+//whether the game score is less than 0 and the game is over
 void GvChangeScore(GameView gv, int n)
 {
 	gv->score += n;
@@ -520,54 +496,54 @@ void GvChangeScore(GameView gv, int n)
 	}
 }
 
-//pastPlays的执行函数
+//execution function of pastPlays
 void GvRunGame(GameView gv, char* pastPlays, Message messages[])
 {
 	size_t size = strlen(pastPlays);
-	if(size == 0){//无效表
+	if(size == 0){				//invalid situation
 		return ;
 	}
 
 	Player id;
 	
-	char turn[8];	//一轮游戏
+	char turn[8];				//one turn
 	int turnID = 0;
 
-	char city[3];	//城市信息
+	char city[3];				//city information
 	PlaceId cityID;
 
-	int msgID = 0;	//对话索引
+	int msgID = 0;				//Dialogue Index
 
 	for(int c=0; c<=size; c += 8){
-		memcpy(turn, pastPlays + c, 7);	//一轮游戏7个字节
-		turn[7] = '\0';					//第八个字节设置0
-		id = NameToPlayer(turn[0]);	//玩家ID
+		memcpy(turn, pastPlays + c, 7);	//7 bytes for one turn
+		turn[7] = '\0';			//The eighth byte is set to 0
+		id = NameToPlayer(turn[0]);	//Player ID
 		GetCity(city, turn);
-		GvSetPlayer(gv, id);	//设置当前玩家
-		cityID = placeAbbrevToId(city);	//获取城市id
+		GvSetPlayer(gv, id);		//Set current player
+		cityID = placeAbbrevToId(city);	//Get city id
 		GvMove(gv, cityID);
 		if(strlen(messages[msgID])){
 			printf("    %-10s  说道：   \"%s\"\n", PlayerName(id), (char*)messages[msgID]);
 		}
 		else{
-		}//test7 bug已修复
+		}
 
 		for(int i=3; i<8; ++i){
 			switch(turn[i]){
-			case '\0'://本轮处理结束，切换下一个玩家
-				++turnID;
-				if(turnID == NUM_PLAYERS){//回合结束
+			case '\0':		//This round of processing is over
+				++turnID;	//switch to the next player
+				if(turnID == NUM_PLAYERS){	//round over
 					turnID = 0;
-					++gv->round;//游戏回合数+1
+					++gv->round;		//Game rounds +1
 
-					//处理吸血鬼成长事件
+					//Dealing with vampire growth
 					GvVampireProc(gv);
 
-					//处理所有城市陷阱，减少耐久度
+					//Deal with all traps and reduce durability
 					GvTrapProc(gv);
 				}
 
-				//德古拉每回合结束，记分减少
+				//Dracula’s score decreases at the end of each round
 				if(id == PLAYER_DRACULA){
 					GvChangeScore(gv, -SCORE_LOSS_DRACULA_TURN);
 				}
@@ -575,63 +551,64 @@ void GvRunGame(GameView gv, char* pastPlays, Message messages[])
 				++msgID;
 				++id;
 				id %= NUM_PLAYERS;
-				GvSetPlayer(gv, id);//轮换到下一个玩家
+				GvSetPlayer(gv, id);		//Rotate to the next player
 				//printf("当前玩家：%s\n", PlayerName(player));
 				break;
-			case '.'://这个点忽略了
+			case '.':
 				break;
-			case 'V':	//吸血鬼事件
-				if(id == PLAYER_DRACULA){//德古拉事件
-					//德古拉无法在海里触发事件
+			case 'V':	//vamp event
+				if(id == PLAYER_DRACULA){	//dracula event
+					//Dracula cannot trigger events in the sea
 					if(placeIdToType(cityID) == SEA){
 						continue;
 					}
 
-					//这个是读取test编码事件，每13回合刷一个吸血鬼
+					//Refresh a vampire every 13 rounds
 					if((gv->round % 13) == 0){
 						GvAddVampire(gv, cityID);
 						printf("    %-10s  在      %10s 降生了。\n", "吸血鬼", placeIdToName(cityID));
 					}
 				}
-				else{//猎人事件，遭遇吸血鬼，吸血鬼会被消灭掉，猎人不会受伤
+				else{	//Hunter incident, encounter a vampire
+					//the vampire will be destroyed, the hunter will not be injured
 					GvRemoveVampire(gv);
 					printf("    %-10s 和吸血鬼在 %10s 进行了激烈的战斗，吸血鬼被消灭了。\n", 
 						PlayerName(id), placeIdToName(cityID));
 				}
 				break;
-			case 'T':	//陷阱
-				if(id == PLAYER_DRACULA){//德古拉放置陷阱
-					//德古拉无法在海里触发事件
+			case 'T':				//Trap
+				if(id == PLAYER_DRACULA){	//Dracula places a trap
+					//Dracula cannot trigger events in the sea
 					if(placeIdToType(cityID) == SEA){
 						continue;
 					}
 
-					if(gv->round % 13 != 0){//13回合的倍数，不能放置陷阱
+					if(gv->round % 13 != 0){//Multiple of 13 rounds, no traps can be placed
 						GvPushTrap(gv, cityID);
 						int cid = GvGetPlayerLocation(gv, PLAYER_DRACULA);
 						printf("    %-10s  在      %10s 放置了陷阱。\n", PlayerName(id), placeIdToName(cid));
 					}
 				}
-				else{//猎人遭遇陷阱
-					GvRemoveTrap(gv, cityID);//test12
+				else{				//Hunter encounters a trap
+					GvRemoveTrap(gv, cityID);
 					gv->players[id].blood -= LIFE_LOSS_TRAP_ENCOUNTER;
 					printf("    %-10s  在 %10s 遭遇了陷阱，损失了生命值：%d\n", PlayerName(id), placeIdToName(cityID), LIFE_LOSS_TRAP_ENCOUNTER);
 				}
 				break;
-			case 'D'://猎人和德古拉遭遇
+			case 'D':				//Hunter and Dracula encounter
 				//printf("%s---%s 当前位置。", PlayerName(PLAYER_DRACULA), placeIdToName(cityID));
 				printf("    %-10s 和 %s 在 %s 遭遇了。\n", PlayerName(id), PlayerName(PLAYER_DRACULA), placeIdToName(cityID));
-				//猎人掉血
+				//Hunter looses blood
 				gv->players[id].blood -= LIFE_LOSS_DRACULA_ENCOUNTER;
 				printf("      %-10s 损失生命：%d，剩余生命值：%d\n",
 					PlayerName(id), LIFE_LOSS_DRACULA_ENCOUNTER, gv->players[id].blood);
-				GvOnHitHunter(gv, id);//猎人受伤事件
+				GvOnHitHunter(gv, id);		//Hunter injured
 
-				//德古拉掉血
+				//Dracula loses blood
 				gv->players[PLAYER_DRACULA].blood -= LIFE_LOSS_HUNTER_ENCOUNTER;
 				printf("      %-10s 损失生命：%d，剩余生命值：%d\n",
 					PlayerName(PLAYER_DRACULA), LIFE_LOSS_HUNTER_ENCOUNTER, gv->players[PLAYER_DRACULA].blood);
-				GvOnHitDracula(gv);//德古拉受伤事件
+				GvOnHitDracula(gv);		//Dracula injured
 				break;
 			default:
 				printf("未知消息：%c\n", turn[i]);
@@ -655,19 +632,19 @@ GameView GvNew(char *pastPlays, Message messages[])
 	memset(gv, 0, sizeof(*gv));
 	gv->score = GAME_START_SCORE;
 
-	//初始化所有玩家
+	//Initialize all players
 	for(int i=0; i<NUM_PLAYERS; ++i){
 		GvInitPlayer(gv, i);
 	}
 
-	//设置当前player
+	//Set current player
 	gv->currentPlayer = PLAYER_LORD_GODALMING;
 
-	//初始化吸血鬼
+	//Initialize the vampire
 	gv->vamp.born = -1;
 	gv->vamp.bornCity = NOWHERE;
 
-	//初始化所有遭遇
+	//Initialize all encounters
 	EncounterInfo ev;
 	for(int city = 0; city < MAXIMUM_CITY; ++city){
 		ev = gv->encounters[city];
@@ -676,10 +653,10 @@ GameView GvNew(char *pastPlays, Message messages[])
 		}
 	}
 
-	//创建地图
+	//Create a map
 	gv->gameMap = MapNew();
 
-	//执行游戏
+	//Run the game
 	GvRunGame(gv, pastPlays, messages);
 
 	return gv;
@@ -689,10 +666,10 @@ void GvFree(GameView gv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 
-	//释放地图
+	//Release map
 	MapFree(gv->gameMap);
 
-	//释放游戏对象
+	//Release game objects
 	free(gv);
 }
 
