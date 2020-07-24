@@ -10,10 +10,11 @@
 
 # CheckList
 - [x] uploaded the initial code files 
-  
+- [x] uploaded struct completely
+
 #### **Due: 23:59 on Fri 31 July**
-- [ ] finish 3 views code
-- [ ] finish 3 views test
+- [ ] submit 3 views code
+- [ ] submit 3 views test
   
 #### **Due: TBA**
 - [ ] finish the hunt
