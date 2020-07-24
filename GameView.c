@@ -726,6 +726,7 @@ PlaceId GvGetVampireLocation(GameView gv)
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
+	*numTraps = 0;
 	PlaceId *trap = malloc(sizeof(PlaceId) * MAXIMUM_CITY * MAXIMUM_TRAP);
 	int num = 0;
 	EncounterInfo ev;
