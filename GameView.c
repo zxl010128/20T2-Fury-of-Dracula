@@ -753,7 +753,6 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 ////////////////////////////////////////////////////////////////////////
 // Game History
 
-
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
@@ -827,7 +826,6 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
     }
     
     locationHistory[locCount] = gv->players[player].current;
-    (*numReturnedLocs)++;
     (*canFree) = true;
 
     return locationHistory;
