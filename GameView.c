@@ -62,7 +62,7 @@ typedef struct gameView {
 	struct amateurVamp vamp;		//吸血鬼，只有一个
 
 	Round round;	//游戏回合数
-	Map m;
+	Map gameMap;
 	struct playerInfo players[NUM_PLAYERS];	//玩家列表
 	Player currentPlayer;	//当前玩家
 }*GameView;
@@ -672,7 +672,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	}
 
 	//创建地图
-	gv->m = MapNew();
+	gv->gameMap = MapNew();
 
 	//执行游戏
 	GvRunGame(gv, pastPlays, messages);
@@ -685,7 +685,7 @@ void GvFree(GameView gv)
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 
 	//释放地图
-	MapFree(gv->m);
+	MapFree(gv->gameMap);
 
 	//释放游戏对象
 	free(gv);
