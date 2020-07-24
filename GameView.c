@@ -711,17 +711,17 @@ int GvGetScore(GameView gv)
 
 int GvGetHealth(GameView gv, Player player)
 {
-	return gv->players[player]->blood;
+	return gv->players[player].blood;
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-	return gv->player[player]->current;
+	return gv->players[player].current;
 }
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	return gv->vamp->bornCity;
+	return gv->vamp.bornCity;
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
@@ -733,17 +733,16 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 	for (int i = 0; i < MAXIMUM_CITY; i++) {
 		ev = gv->encounters[i];
 		for (int j = 0, j < MAXIMUM_TRAP, j++) {
-			if (ev[j]->type == EncounterTrap) {
+			if (ev[j].type == EncounterTrap) {
 				p[num] = i;
 				num++; 
 			}
 		}
 	}
 
-	numTraps = num;
-	return p;
+	*numTraps = num;
+	return trap;
 }
-
 
 ////////////////////////////////////////////////////////////////////////
 // Game History
