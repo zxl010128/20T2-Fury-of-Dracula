@@ -644,6 +644,24 @@ int main(void)
 		GvFree(gv);
 		printf("Test passed!\n");
 	}
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("16.Testing Dracula Teleport\n");
+		
+		char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DST.V.. "
+			"GGE.... SGE.... HGE.... MGE.... DTPT...";
+		
+		Message messages[10] = {};
+		GameView gv = GvNew(trail, messages);
+		
+		assert(GvGetHealth(gv, PLAYER_DRACULA) ==
+				GAME_START_BLOOD_POINTS + (1 * LIFE_GAIN_CASTLE_DRACULA));
+		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CASTLE_DRACULA);
+		
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
 
 	return EXIT_SUCCESS;
 }
