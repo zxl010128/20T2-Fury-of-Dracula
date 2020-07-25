@@ -761,14 +761,13 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
       
     int moveTimes = GvGetTotalMoves(gv, player);
     
-    if (moveTimes == 0){
+    if (moveTimes == 0 || numMoves == 0){
         *numReturnedMoves = 0;
         (*canFree) = false;
         return NULL;
     }
     
     PlaceId *moveHistory = malloc(sizeof(PlaceId) * numMoves);
-    
     
     for (int i = 0; i < numMoves - 1; i++) {
         moveHistory[i] = gv->players[player].history[numMoves - i - 2];
@@ -786,7 +785,7 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
                               int *numReturnedLocs, bool *canFree)
 {
-
+	
     int locCount = GvGetTotalLocations(gv, player);
     
     if (locCount == 0){
@@ -794,16 +793,22 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
         (*canFree) = false;
         return NULL;
     }
-    
-    PlaceId *locationHistory = malloc(sizeof(PlaceId) * (locCount + 1));
-    
-    for (int i = 0; i < locCount; i++) {
-        locationHistory[i] = gv->players[player].locHistory[locCount - i - 1];
-        (*numReturnedLocs)++;
-    }
-    
-    locationHistory[locCount] = gv->players[player].current;
-    (*canFree) = true;
+	
+	PlaceId *locationHistory = malloc(sizeof(PlaceId) * (locCount + 1));    
+	
+	if (player == PLAYER_DRACULA) {
+
+		for (int i = 0; i < locCount; i++) {
+			locationHistory[i] = gv->players[player].locHistory[locCount - i - 1];
+			(*numReturnedLocs)++;
+		}
+		
+		locationHistory[locCount] = gv->players[player].current;
+		(*canFree) = true;
+
+	} else {
+		locationHistory = GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
+	}
 
     return locationHistory;
 
@@ -814,7 +819,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 {
     int locCount = GvGetTotalLocations(gv, player);
     
-    if (locCount == 0){
+    if (locCount == 0 || numLocs == 0){
         *numReturnedLocs = 0;
         (*canFree) = false;
         return NULL;
@@ -824,7 +829,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 
 
     for (int i = 0; i < numLocs - 1; i++) {
-        locationHistory[i] = gv->players[player].locHistory[numLocs - i - 2];
+        locationHistory[i] = gv->players[player].locHistory[numLocs - i - 1];
         (*numReturnedLocs)++;
     }
 
@@ -1177,3 +1182,4 @@ int GvGetTotalLocations(GameView gv, Player player) {
     }
     return num;
 }
+	
