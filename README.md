@@ -1,5 +1,5 @@
 # 20T2-Fury-of-Dracula
-20T2 Assignment 2 Fury-of-Dracula repo
+20T2 COMP2521 Assignment 2 Fury-of-Dracula repo for Team Xinlei - Jiajun - Yuhan - Mengrong
 
 # Team member
 
