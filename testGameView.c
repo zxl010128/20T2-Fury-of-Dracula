@@ -743,7 +743,7 @@ int main(void)
 			PlaceId *moves = GvGetLastLocations(gv, PLAYER_LORD_GODALMING, recentNum,
 			                                  &numMoves, &canFree);
 			assert(numMoves == 0);
-
+			assert(moves == NULL);
 			if (canFree) free(moves);
 		}
 
@@ -754,7 +754,7 @@ int main(void)
 			PlaceId *moves = GvGetLastMoves(gv, PLAYER_DRACULA, recentNum,
 			                                  &numMoves, &canFree);
 			assert(numMoves == 0);
-
+			assert(moves == NULL);
 			if (canFree) free(moves);
 		}
 		GvFree(gv);
@@ -777,7 +777,7 @@ int main(void)
 			PlaceId *moves = GvGetLastMoves(gv, PLAYER_LORD_GODALMING, recentNum,
 			                                  &numMoves, &canFree);
 			assert(numMoves == 0);
-
+			assert(moves == NULL);
 			if (canFree) free(moves);
 		}		
 		
@@ -788,7 +788,7 @@ int main(void)
 			PlaceId *moves = GvGetLastLocations(gv, PLAYER_LORD_GODALMING, recentNum,
 			                                  &numMoves, &canFree);
 			assert(numMoves == 0);
-	
+			assert(moves == NULL);	
 			if (canFree) free(moves);
 		}
 		// Dracula's Last move when there is no move
@@ -798,7 +798,7 @@ int main(void)
 			PlaceId *moves = GvGetLastMoves(gv, PLAYER_DRACULA, recentNum,
 			                                  &numMoves, &canFree);
 			assert(numMoves == 0);
-
+			assert(moves == NULL);
 			if (canFree) free(moves);
 		}
 
@@ -809,6 +809,7 @@ int main(void)
 			PlaceId *locs = GvGetLastLocations(gv, PLAYER_DRACULA, recentNum, 
 			                                     &numLocs, &canFree);
 			assert(numLocs == 0);
+			assert(locs == NULL);
 			if (canFree) free(locs);
 		}
 
