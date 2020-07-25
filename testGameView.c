@@ -412,8 +412,73 @@ int main(void)
 	}
 
 	{///////////////////////////////////////////////////////////////////
-	
-		printf("Testing connections\n");
+		printf("Testing connections (GvGetReachable test)\n");
+
+		char *trail = "";
+		Message messages[] = {};
+		GameView gv = GvNew(trail, messages);
+		
+		{
+			printf("\tChecking Rome raod, rail and boat connections "
+			       "(Dr Seward, Round 1)\n");
+			int numLocs = -1;
+			PlaceId *locs = GvGetReachable(gv, PLAYER_DR_SEWARD,
+			                                     1, ROME, &numLocs);
+			
+			assert(numLocs == 6);
+			sortPlaces(locs, numLocs);			
+			assert(locs[0] == BARI);
+			assert(locs[1] == FLORENCE);
+			assert(locs[2] == MILAN);
+			assert(locs[3] == NAPLES);
+			assert(locs[4] == ROME);
+			assert(locs[5] == TYRRHENIAN_SEA);			
+			free(locs);
+		}
+		
+		{
+			printf("\tChecking Constanta raod, rail and boat connections "
+			       "(Mina Harker, Round 8)\n");
+			int numLocs = -1;
+			PlaceId *locs = GvGetReachable(gv, PLAYER_MINA_HARKER,
+			                                     8, CONSTANTA, &numLocs);
+			
+			assert(numLocs == 8);
+			sortPlaces(locs, numLocs);			
+			assert(locs[0] == BELGRADE);
+			assert(locs[1] == BLACK_SEA);
+			assert(locs[2] == BUCHAREST);
+			assert(locs[3] == BUDAPEST);
+			assert(locs[4] == CONSTANTA);
+			assert(locs[5] == GALATZ);	
+			assert(locs[6] == SZEGED);
+			assert(locs[7] == VARNA);				
+			free(locs);
+		}
+		
+		{
+			printf("\tChecking Constanta raod, rail and boat connections "
+			       "(Dracula, Round 8)\n");
+			int numLocs = -1;
+			PlaceId *locs = GvGetReachable(gv, PLAYER_DRACULA,
+			                                     8, CONSTANTA, &numLocs);
+			
+			assert(numLocs == 5);
+			sortPlaces(locs, numLocs);			
+			assert(locs[0] == BLACK_SEA);
+			assert(locs[1] == BUCHAREST);
+			assert(locs[2] == CONSTANTA);
+			assert(locs[3] == GALATZ);	
+			assert(locs[4] == VARNA);				
+			free(locs);
+		}
+
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		printf("Testing connections (GvGetReachableByType test)\n");
 		
 		char *trail = "";
 		Message messages[] = {};
@@ -489,6 +554,92 @@ int main(void)
 			assert(locs[0] == ATHENS);
 			free(locs);
 		}
+
+		{
+			printf("\tChecking Frankfurt rail connections "
+			       "(Lord Godalming, Round 3)\n");
+			int numLocs = -1;
+			PlaceId *locs = GvGetReachableByType(gv, PLAYER_LORD_GODALMING,
+			                                     3, FRANKFURT, false, true,
+			                                     false, &numLocs);
+			
+			assert(numLocs == 13);
+			sortPlaces(locs, numLocs);
+			assert(locs[0] == BERLIN);
+			assert(locs[1] == BRUSSELS);
+			assert(locs[2] == COLOGNE);
+			assert(locs[3] == FRANKFURT);
+			assert(locs[4] == HAMBURG);
+			assert(locs[5] == LEIPZIG);
+			assert(locs[6] == MILAN);
+			assert(locs[7] == MUNICH);
+			assert(locs[8] == NUREMBURG);
+			assert(locs[9] == PARIS);
+			assert(locs[10] == PRAGUE);
+			assert(locs[11] == STRASBOURG);
+			assert(locs[11] == STRASBOURG);
+			assert(locs[11] == STRASBOURG);
+			assert(locs[12] == ZURICH);
+			free(locs);
+		}	
+		
+		{
+			printf("\tChecking Rome raod, rail and boat connections "
+			       "(Dr Seward, Round 1)\n");
+			int numLocs = -1;
+			PlaceId *locs = GvGetReachableByType(gv, PLAYER_DR_SEWARD,
+			                                     1, ROME, true, true,
+			                                     true, &numLocs);
+			
+			assert(numLocs == 6);
+			sortPlaces(locs, numLocs);			
+			assert(locs[0] == BARI);
+			assert(locs[1] == FLORENCE);
+			assert(locs[2] == MILAN);
+			assert(locs[3] == NAPLES);
+			assert(locs[4] == ROME);
+			assert(locs[5] == TYRRHENIAN_SEA);			
+			free(locs);
+		}
+		
+		{
+			printf("\tChecking Constanta raod, rail and boat connections "
+			       "(Mina Harker, Round 8)\n");
+			int numLocs = -1;
+			PlaceId *locs = GvGetReachableByType(gv, PLAYER_MINA_HARKER,
+			                                     8, CONSTANTA, true, true,
+			                                     true, &numLocs);
+			
+			assert(numLocs == 8);
+			sortPlaces(locs, numLocs);			
+			assert(locs[0] == BELGRADE);
+			assert(locs[1] == BLACK_SEA);
+			assert(locs[2] == BUCHAREST);
+			assert(locs[3] == BUDAPEST);
+			assert(locs[4] == CONSTANTA);
+			assert(locs[5] == GALATZ);	
+			assert(locs[6] == SZEGED);
+			assert(locs[7] == VARNA);				
+			free(locs);
+		}
+		
+		{
+			printf("\tChecking Constanta raod, rail and boat connections "
+			       "(Dracula, Round 8)\n");
+			int numLocs = -1;
+			PlaceId *locs = GvGetReachableByType(gv, PLAYER_DRACULA,
+			                                     8, CONSTANTA, true, true,
+			                                     true, &numLocs);
+			
+			assert(numLocs == 5);
+			sortPlaces(locs, numLocs);			
+			assert(locs[0] == BLACK_SEA);
+			assert(locs[1] == BUCHAREST);
+			assert(locs[2] == CONSTANTA);
+			assert(locs[3] == GALATZ);	
+			assert(locs[4] == VARNA);				
+			free(locs);
+		}			
 
 		GvFree(gv);
 		printf("Test passed!\n");
