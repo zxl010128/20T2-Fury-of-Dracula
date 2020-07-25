@@ -4,9 +4,11 @@
 # Team member
 
 - Xinlei Zhang 
+
     - GitHub Username : zxl010128
     - zID : z5237609
     - Tutorial Code : W15A
+
 - Jiajun Li 
 - Mengrong Li 
 - Yuhan Yan
