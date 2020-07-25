@@ -307,10 +307,15 @@ void GvMove(GameView gv, PlaceId city)
 		}
 	
 		break;
-	case TELEPORT:
-		GvAddHistory(player, city);
-		player->current = city;
-		printf("    %-10s  施展时空法术，传送到了  %s\n", PlayerName(player->ID), placeIdToName(city));
+	case TELEPORT:					
+		if(player->ID == PLAYER_DRACULA){
+			GvAddHistory(player, city);
+			player->current = CASTLE_DRACULA;//Teleport to the castle
+			player->move = city;
+			GvAddLocationHistory(gv, player, player->current);
+			printf("    %-10s  施展时空法术，传送到了  %s\n", PlayerName(player->ID), placeIdToName(CASTLE_DRACULA));
+			GvPlayerRest(gv, player);	//Rest
+		}
 		break;
 	case UNKNOWN_PLACE:
 	case NOWHERE:
