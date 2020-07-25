@@ -378,6 +378,22 @@ int main(void)
 			if (canFree) free(moves);
 		}
 		
+		// Lord Godalming's location history
+		{
+			int numLocs = 0; bool canFree = false;
+			PlaceId *locs = GvGetLocationHistory(gv, PLAYER_LORD_GODALMING,
+			                                  &numLocs, &canFree);
+			assert(numLocs == 7);
+			assert(locs[0] == LISBON);
+			assert(locs[1] == CADIZ);
+			assert(locs[2] == GRANADA);
+			assert(locs[3] == ALICANTE);
+			assert(locs[4] == SARAGOSSA);
+			assert(locs[5] == SANTANDER);
+			assert(locs[6] == MADRID);
+			if (canFree) free(locs);
+		}
+		
 		// Dracula's move/location history
 		{
 			int numMoves = 0; bool canFree = false;
@@ -659,6 +675,161 @@ int main(void)
 				GAME_START_BLOOD_POINTS + (1 * LIFE_GAIN_CASTLE_DRACULA));
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CASTLE_DRACULA);
 		
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
+	
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Testing Last moves/locations history\n");
+		
+		char *trail =
+			"GLS.... SGE.... HGE.... MGE.... DST.V.. "
+			"GCA.... SGE.... HGE.... MGE.... DC?T... "
+			"GGR.... SGE.... HGE.... MGE.... DC?T... "
+			"GAL.... SGE.... HGE.... MGE.... DD3T... "
+			"GSR.... SGE.... HGE.... MGE.... DHIT... "
+			"GSN.... SGE.... HGE.... MGE.... DC?T... "
+			"GMA.... SSTTTV.";
+		
+		Message messages[32] = {};
+		GameView gv = GvNew(trail, messages);
+		
+		assert(GvGetHealth(gv, PLAYER_DR_SEWARD) ==
+				GAME_START_HUNTER_LIFE_POINTS - 2 * LIFE_LOSS_TRAP_ENCOUNTER);
+		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CITY_UNKNOWN);
+		assert(GvGetVampireLocation(gv) == NOWHERE);
+		
+		// Lord Godalming's last move
+		{
+			int numMoves = 0; bool canFree = false;
+			int recentNum = 4;
+			PlaceId *moves = GvGetLastMoves(gv, PLAYER_LORD_GODALMING, recentNum,
+			                                  &numMoves, &canFree);
+			assert(numMoves == 4);
+			assert(moves[0] == ALICANTE);
+			assert(moves[1] == SARAGOSSA);
+			assert(moves[2] == SANTANDER);
+			assert(moves[3] == MADRID);
+			if (canFree) free(moves);
+		}		
+		
+		// Lord Godalming's last location
+		{
+			int numMoves = 0; bool canFree = false;
+			int recentNum = 4;
+			PlaceId *moves = GvGetLastLocations(gv, PLAYER_LORD_GODALMING, recentNum,
+			                                  &numMoves, &canFree);
+			assert(numMoves == 4);
+			assert(moves[0] == ALICANTE);
+			assert(moves[1] == SARAGOSSA);
+			assert(moves[2] == SANTANDER);
+			assert(moves[3] == MADRID);
+			if (canFree) free(moves);
+		}
+		// Dracula's Last move
+		{
+			int numMoves = 0; bool canFree = false;
+			int recentNum = 3;
+			PlaceId *moves = GvGetLastMoves(gv, PLAYER_DRACULA, recentNum,
+			                                  &numMoves, &canFree);
+			assert(numMoves == 3);
+			assert(moves[0] == DOUBLE_BACK_3);
+			assert(moves[1] == HIDE);
+			assert(moves[2] == CITY_UNKNOWN);
+
+			if (canFree) free(moves);
+		}
+
+		// Dracula's Last location		
+		{
+			int numLocs = 0; bool canFree = false;
+			int recentNum = 3;
+			PlaceId *locs = GvGetLastLocations(gv, PLAYER_DRACULA, recentNum, 
+			                                     &numLocs, &canFree);
+			assert(numLocs == 3);
+			assert(locs[0] == STRASBOURG);
+			assert(locs[1] == STRASBOURG);
+			assert(locs[2] == CITY_UNKNOWN);
+			if (canFree) free(locs);
+		}
+
+		// Lord Godalming's last location when num == 0
+		{
+			int numMoves = 0; bool canFree = false;
+			int recentNum = 0;
+			PlaceId *moves = GvGetLastLocations(gv, PLAYER_LORD_GODALMING, recentNum,
+			                                  &numMoves, &canFree);
+			assert(numMoves == 0);
+
+			if (canFree) free(moves);
+		}
+
+		// Dracula's Last move when num == 0
+		{
+			int numMoves = 0; bool canFree = false;
+			int recentNum = 0;
+			PlaceId *moves = GvGetLastMoves(gv, PLAYER_DRACULA, recentNum,
+			                                  &numMoves, &canFree);
+			assert(numMoves == 0);
+
+			if (canFree) free(moves);
+		}
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Testing Last moves/locations history when just start\n");
+		
+		char *trail = "";
+		
+		Message messages[0] = {};
+		GameView gv = GvNew(trail, messages);
+		
+		// Lord Godalming's last move when there is no move
+		{
+			int numMoves = 0; bool canFree = false;
+			int recentNum = 4;
+			PlaceId *moves = GvGetLastMoves(gv, PLAYER_LORD_GODALMING, recentNum,
+			                                  &numMoves, &canFree);
+			assert(numMoves == 0);
+
+			if (canFree) free(moves);
+		}		
+		
+		// Lord Godalming's last location when there is no location
+		{
+			int numMoves = 0; bool canFree = false;
+			int recentNum = 4;
+			PlaceId *moves = GvGetLastLocations(gv, PLAYER_LORD_GODALMING, recentNum,
+			                                  &numMoves, &canFree);
+			assert(numMoves == 0);
+	
+			if (canFree) free(moves);
+		}
+		// Dracula's Last move when there is no move
+		{
+			int numMoves = 0; bool canFree = false;
+			int recentNum = 3;
+			PlaceId *moves = GvGetLastMoves(gv, PLAYER_DRACULA, recentNum,
+			                                  &numMoves, &canFree);
+			assert(numMoves == 0);
+
+			if (canFree) free(moves);
+		}
+
+		// Dracula's Last location when there is no location		
+		{
+			int numLocs = 0; bool canFree = false;
+			int recentNum = 3;
+			PlaceId *locs = GvGetLastLocations(gv, PLAYER_DRACULA, recentNum, 
+			                                     &numLocs, &canFree);
+			assert(numLocs == 0);
+			if (canFree) free(locs);
+		}
+
 		GvFree(gv);
 		printf("Test passed!\n");
 	}
