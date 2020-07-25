@@ -11,13 +11,15 @@
 # CheckList
 - [x] uploaded the initial code files 
 - [x] uploaded struct completely
+- [x] finished all GameView.c and TestGameView.c
 
 #### **Due: 23:59 on Fri 31 July**
 - [ ] submit 3 views code
 - [ ] submit 3 views test
   
-#### **Due: TBA**
-- [ ] finish the hunt
+#### **Due: 23:59 on Sun 9 August**
+- [ ] finish the Hunt AI
+- [ ] finish the Dracula AI
   
 # Reminder
 - wikis
