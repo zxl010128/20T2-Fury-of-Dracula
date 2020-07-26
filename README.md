@@ -23,6 +23,10 @@
     
 - Yuhan Yan
 
+    - GitHub Username : YuhanYan2000
+    - zID : z5270656
+    - Tutorial Code : W15A
+
 # CheckList
 - [x] uploaded the initial code files 
 - [x] uploaded struct completely
