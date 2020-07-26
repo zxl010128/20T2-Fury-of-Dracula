@@ -921,5 +921,59 @@ int main(void)
 		GvFree(gv);
 		printf("Test passed!\n");
 	}
+	{///////////////////////////////////////////////////////////////////
+
+		printf("Testing doubleback\n");
+		
+		char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DMR.V.. "
+			"GMI.... SZU.... HPA.... MCF.... DC?T... "
+			"GGO.... SMU.... HMR.... MTO.... DC?T... "
+			"GTS.... SZA.... HMS.... MBO.... DTOT... "
+			"GRO.... SSZ.... HCG.... MMS.... DD3T... "
+			"GNP.... SBE.... HMS.... MNA.... DC?T... "
+			"GNP.... SBE.... HMS.... MNA.... DTPTV..";
+		
+		Message messages[30] = {};
+		GameView gv = GvNew(trail, messages);
+
+		assert(GvGetScore(gv) == GAME_START_SCORE
+		                         - 7 * SCORE_LOSS_DRACULA_TURN
+		                         - SCORE_LOSS_VAMPIRE_MATURES);
+		assert(GvGetHealth(gv, PLAYER_DRACULA) == GAME_START_BLOOD_POINTS + LIFE_GAIN_CASTLE_DRACULA);
+		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CASTLE_DRACULA);
+		assert(GvGetVampireLocation(gv) == NOWHERE);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+
+		printf("Testing doubleback\n");
+		
+		char *trail =
+			"GAS.... SVI.... HAL.... MGA.... DLS.V.. "
+			"GAS.... SPR.... HBA.... MGA.... DC?T... "
+			"GAS.... SPR.... HAL.... MGA.... DC?T... "
+			"GAS.... SPR.... HAL.... MBC.... DCAT... "
+			"GVE.... SPR.... HSR.... MBC.... DD1T... "
+			"GVE.... SZA.... HMA.... MBE.... DGRT... "
+			"GMU.... SZA.... HGR.... MBC.... DCA.V.. "
+			"GMU.... SBR.... HGR.... MKL.... DMAT... "
+			"GMU.... SBR.... HCA.... MSZ.... DD5T..."
+			
+			
+			;
+		
+		Message messages[45] = {};
+		GameView gv = GvNew(trail, messages);
+
+		assert(GvGetScore(gv) == GAME_START_SCORE
+		                         - 9 * SCORE_LOSS_DRACULA_TURN
+		                         - SCORE_LOSS_VAMPIRE_MATURES);
+		assert(GvGetHealth(gv, PLAYER_DRACULA) == GAME_START_BLOOD_POINTS);
+		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CITY_UNKNOWN);
+		assert(GvGetVampireLocation(gv) == NOWHERE);
+		printf("Test passed!\n");
+	}
 	return EXIT_SUCCESS;
 }
