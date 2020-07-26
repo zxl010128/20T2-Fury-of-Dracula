@@ -10,10 +10,17 @@
     - Tutorial Code : W15A
 
 - Jiajun Li 
+
     - GitHub Username : Jeffery-Lee-QAQ
     - zID : z5237312
     - Tutorial Code : W15A
-- Mengrong Li 
+    
+- Mengrong Li
+
+    - GitHub Username : Gina4303
+    - zID : z5237133
+    - Tutorial Code : W15A
+    
 - Yuhan Yan
 
 # CheckList
