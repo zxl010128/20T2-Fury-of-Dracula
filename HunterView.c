@@ -21,6 +21,7 @@
 #include "Places.h"
 // add your own #includes here
 
+bool placeRealCheck(PlaceId pid);
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 struct hunterView {
@@ -47,7 +48,7 @@ HunterView HvNew(char *pastPlays, Message messages[])
 
 void HvFree(HunterView hv)
 {
-    	GvFree(hv->gv);
+    GvFree(hv->gv);
 	free(hv);
 }
 
@@ -89,9 +90,35 @@ PlaceId HvGetVampireLocation(HunterView hv)
 
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*round = 0;
-	return NOWHERE;
+	Round current_round = GvGetRound(hv->gv);
+
+	int history_count = 0;
+	bool canFree = false;
+	PlaceId *locations_his = GvGetLocationHistory(hv->gv, PLAYER_DRACULA, &history_count, &canFree);
+
+	bool is_found = false;
+
+	PlaceId lastKnown;
+
+	for (int i = 0; i <= history_count; i++) {
+		if (placeRealCheck(locations_his[history_count - 1 - i]) == false) {
+			current_round--;
+		} else {
+			is_found = true;
+			lastKnown = locations_his[history_count - 1 - i];
+			current_round--;
+			break;
+		}
+	}
+
+	if (is_found == false) {
+		*round = 0;
+		return NOWHERE;
+	}
+
+	*round = current_round;
+	return lastKnown;
+
 }
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
@@ -140,4 +167,7 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
-// TODO
+bool placeRealCheck(PlaceId pid)
+{
+	return pid >= MIN_REAL_PLACE && pid <= MAX_REAL_PLACE;
+}
