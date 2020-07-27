@@ -100,7 +100,7 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 
 	PlaceId lastKnown;
 
-	for (int i = 0; i <= history_count; i++) {
+	for (int i = 0; i < history_count; i++) {
 		if (placeRealCheck(locations_his[history_count - 1 - i]) == false) {
 			current_round--;
 		} else {
