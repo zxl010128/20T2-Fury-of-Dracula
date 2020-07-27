@@ -172,18 +172,79 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	if (player != PLAYER_DRACULA) {
+		Round round = HvGetRound(hv);
+		PlaceId current = HvGetPlayerLocation(hv, player);
+		*numReturnedLocs = 0;
+		PlaceId *reachableLocations = GvGetReachable(hv->gv, player, round, current, numReturnedLocs);
+
+		if (reachableLocations == NULL) {
+			*numReturnedLocs = 0;
+			return NULL;
+		}
+
+		return reachableLocations;
+
+	} else {
+		PlaceId check = HvGetPlayerLocation(hv, player);
+		if (check == CITY_UNKNOWN || check == SEA_UNKNOWN) {
+			*numReturnedLocs = 0;
+			return NULL;
+
+		} else {
+			Round round = HvGetRound(hv);
+			*numReturnedLocs = 0;
+			PlaceId *reachableLocations = GvGetReachable(hv->gv, player, round, check, numReturnedLocs);
+
+			if (reachableLocations == NULL) {
+				*numReturnedLocs = 0;
+				return NULL;
+			}
+
+			return reachableLocations;
+		}
+	}
 }
 
 PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	if (player != PLAYER_DRACULA) {
+		Round round = HvGetRound(hv);
+		PlaceId current = HvGetPlayerLocation(hv, player);
+		*numReturnedLocs = 0;
+		PlaceId *reachableByType = GvGetReachableByType(hv->gv, player, round, current, 
+								road, rail, boat, numReturnedLocs);
+
+		if (reachableByType == NULL) {
+			*numReturnedLocs = 0;
+			return NULL;
+		}
+
+		return reachableByType;
+
+	} else {
+		PlaceId check = HvGetPlayerLocation(hv, player);
+		if (check == CITY_UNKNOWN || check == SEA_UNKNOWN) {
+			*numReturnedLocs = 0;
+			return NULL;
+
+		} else {
+			Round round = HvGetRound(hv);
+			*numReturnedLocs = 0;
+			PlaceId *reachableByType = GvGetReachableByType(hv->gv, player, round, check, 
+								road, rail, boat, numReturnedLocs);
+
+			if (reachableByType == NULL) {
+				*numReturnedLocs = 0;
+				return NULL;
+			}
+
+			return reachableByType;
+
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
