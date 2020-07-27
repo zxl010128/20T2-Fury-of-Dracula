@@ -134,17 +134,39 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+
+	Player player = HvGetPlayer(hv);
+	Round round = HvGetRound(hv);
+	PlaceId current = HvGetPlayerLocation(hv, player);
+
 	*numReturnedLocs = 0;
-	return NULL;
+
+	PlaceId *reachableLocations = GvGetReachable(hv->gv, player, round, current, numReturnedLocs);
+
+	if (reachableLocations == NULL) {
+		*numReturnedLocs = 0;
+		return NULL;
+	}
+
+	return reachableLocations;
 }
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	Player player = HvGetPlayer(hv);
+	Round round = HvGetRound(hv);
+	PlaceId current = HvGetPlayerLocation(hv, player);
+
 	*numReturnedLocs = 0;
-	return NULL;
+	PlaceId *reachableByType = GvGetReachableByType(hv->gv, player, round, current, 
+								road, rail, boat, numReturnedLocs);
+	
+	if (reachableByType == NULL) {
+		*numReturnedLocs = 0;
+		return NULL;
+	}
+	return reachableByType;
 }
 
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
