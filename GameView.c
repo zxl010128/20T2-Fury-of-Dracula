@@ -615,18 +615,20 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
         return NULL;
     }
     
+    int move_count = 0;
     PlaceId *moveHistory = malloc(sizeof(PlaceId) * (moveTimes + 1));
     
     for (int i = 0; i < moveTimes; i++) {
         moveHistory[i] = gv->players[player].history[moveTimes - i - 1];
-        (*numReturnedMoves)++;
+        move_count++;
     }
     
     moveHistory[moveTimes] = gv->players[player].move;
-    (*numReturnedMoves)++;
+    move_count++;
+    (*numReturnedMoves) = move_count;
     (*canFree) = true;
 
-	return moveHistory;
+    return moveHistory;
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
@@ -641,21 +643,23 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
         return NULL;
     }
     
+    int move_count = 0;
     PlaceId *moveHistory = malloc(sizeof(PlaceId) * numMoves);
     
-	if (numMoves > moveTimes) {
-		moveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, canFree);
-	
-	} else {
-		for (int i = 0; i < numMoves - 1; i++) {
-			moveHistory[i] = gv->players[player].history[numMoves - i - 2];
-			(*numReturnedMoves)++;
-		}
-		
-		moveHistory[*numReturnedMoves] = gv->players[player].move;
-		(*numReturnedMoves)++;
-		(*canFree) = true;
-	}
+    if (numMoves > moveTimes) {
+        moveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, canFree);
+    
+    } else {
+        for (int i = 0; i < numMoves - 1; i++) {
+            moveHistory[i] = gv->players[player].history[numMoves - i - 2];
+            move_count++;
+        }
+        
+        moveHistory[move_count] = gv->players[player].move;
+        move_count++;
+        (*numReturnedMoves) = move_count;
+        (*canFree) = true;
+    }
 
     return moveHistory;
 
@@ -664,7 +668,7 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
                               int *numReturnedLocs, bool *canFree)
 {
-	
+    
     int locCount = GvGetTotalLocations(gv, player);
     
     if (locCount == 0){
@@ -672,22 +676,24 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
         (*canFree) = false;
         return NULL;
     }
-	
-	PlaceId *locationHistory = malloc(sizeof(PlaceId) * (locCount + 1));    
-	
-	if (player == PLAYER_DRACULA) {
+    
+    int loccount = 0;
+    PlaceId *locationHistory = malloc(sizeof(PlaceId) * (locCount + 1));
+    
+    if (player == PLAYER_DRACULA) {
 
-		for (int i = 0; i < locCount; i++) {
-			locationHistory[i] = gv->players[player].locHistory[locCount - i - 1];
-			(*numReturnedLocs)++;
-		}
-		
-		locationHistory[locCount] = gv->players[player].current;
-		(*canFree) = true;
+        for (int i = 0; i < locCount; i++) {
+            locationHistory[i] = gv->players[player].locHistory[locCount - i - 1];
+            loccount++;
+        }
+        
+        locationHistory[locCount] = gv->players[player].current;
+        (*numReturnedLocs) = loccount;
+        (*canFree) = true;
 
-	} else {
-		locationHistory = GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
-	}
+    } else {
+        locationHistory = GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
+    }
 
     return locationHistory;
 
@@ -705,22 +711,24 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
     }
     
     PlaceId *locationHistory = malloc(sizeof(PlaceId) * numLocs);
-	
-	if (numLocs > locCount) {
-		locationHistory = GvGetLocationHistory(gv, player, numReturnedLocs, canFree);
-	
-	} else {
-		for (int i = 0; i < numLocs - 1; i++) {
-			locationHistory[i] = gv->players[player].locHistory[numLocs - i - 1];
-			(*numReturnedLocs)++;
-		}
+    int loccount = 0;
 
-		locationHistory[*numReturnedLocs] = gv->players[player].current;
-		(*numReturnedLocs)++;
-		(*canFree) = true;
-	}
+    if (numLocs > locCount) {
+        locationHistory = GvGetLocationHistory(gv, player, numReturnedLocs, canFree);
+    
+    } else {
+        for (int i = 0; i < numLocs - 1; i++) {
+            locationHistory[i] = gv->players[player].locHistory[numLocs - i - 1];
+            loccount++;
+        }
 
-	return locationHistory;
+        locationHistory[loccount] = gv->players[player].current;
+        loccount++;
+        (*numReturnedLocs) = loccount;
+        (*canFree) = true;
+    }
+
+    return locationHistory;
 }
 
 ////////////////////////////////////////////////////////////////////////
