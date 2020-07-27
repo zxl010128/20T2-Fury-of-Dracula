@@ -946,34 +946,6 @@ int main(void)
 		printf("Test passed!\n");
 	}
 
-	{///////////////////////////////////////////////////////////////////
-
-		printf("Testing doubleback\n");
-		
-		char *trail =
-			"GAS.... SVI.... HAL.... MGA.... DLS.V.. "
-			"GAS.... SPR.... HBA.... MGA.... DC?T... "
-			"GAS.... SPR.... HAL.... MGA.... DC?T... "
-			"GAS.... SPR.... HAL.... MBC.... DCAT... "
-			"GVE.... SPR.... HSR.... MBC.... DD1T... "
-			"GVE.... SZA.... HMA.... MBE.... DGRT... "
-			"GMU.... SZA.... HGR.... MBC.... DCA.V.. "
-			"GMU.... SBR.... HGR.... MKL.... DMAT... "
-			"GMU.... SBR.... HCA.... MSZ.... DD5T..."
-			
-			
-			;
-		
-		Message messages[45] = {};
-		GameView gv = GvNew(trail, messages);
-
-		assert(GvGetScore(gv) == GAME_START_SCORE
-		                         - 9 * SCORE_LOSS_DRACULA_TURN
-		                         - SCORE_LOSS_VAMPIRE_MATURES);
-		assert(GvGetHealth(gv, PLAYER_DRACULA) == GAME_START_BLOOD_POINTS);
-		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CITY_UNKNOWN);
-		assert(GvGetVampireLocation(gv) == NOWHERE);
-		printf("Test passed!\n");
-	}
+	
 	return EXIT_SUCCESS;
 }
