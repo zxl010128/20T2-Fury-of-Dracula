@@ -953,7 +953,7 @@ int main(void)
 			"GAS.... SVI.... HAL.... MGA.... DLS.V.. "
 			"GAS.... SPR.... HBA.... MGA.... DC?T... "
 			"GAS.... SPR.... HAL.... MGA.... DC?T... "
-			"GAS.... SPR.... HAL.... MBC.... DCAT... "
+			"GAS.... SPR.... HAL.... MBC.... DCAT... " 
 			"GVE.... SPR.... HSR.... MBC.... DD1T... "
 			"GVE.... SZA.... HMA.... MBE.... DGRT... "
 			"GMU.... SZA.... HGR.... MBC.... DCA.V.. "
@@ -970,7 +970,7 @@ int main(void)
 		                         - 9 * SCORE_LOSS_DRACULA_TURN
 		                         - SCORE_LOSS_VAMPIRE_MATURES);
 		assert(GvGetHealth(gv, PLAYER_DRACULA) == GAME_START_BLOOD_POINTS);
-		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CITY_UNKNOWN);
+		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CADIZ);
 		assert(GvGetVampireLocation(gv) == NOWHERE);
 		printf("Test passed!\n");
 	}
