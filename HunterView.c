@@ -138,7 +138,9 @@ PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 	Player player = HvGetPlayer(hv);
 	Round round = HvGetRound(hv);
 	PlaceId current = HvGetPlayerLocation(hv, player);
-
+	if (player != PLAYER_LORD_GODALMING) {
+		round++;
+	}
 	*numReturnedLocs = 0;
 
 	PlaceId *reachableLocations = GvGetReachable(hv->gv, player, round, current, numReturnedLocs);
@@ -156,6 +158,9 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 {
 	Player player = HvGetPlayer(hv);
 	Round round = HvGetRound(hv);
+	if (player != PLAYER_LORD_GODALMING) {
+		round++;
+	}
 	PlaceId current = HvGetPlayerLocation(hv, player);
 
 	*numReturnedLocs = 0;
@@ -174,6 +179,9 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 {
 	if (player != PLAYER_DRACULA) {
 		Round round = HvGetRound(hv);
+		if (HvGetPlayer(hv)!= PLAYER_LORD_GODALMING) {
+			round++;
+		}
 		PlaceId current = HvGetPlayerLocation(hv, player);
 		*numReturnedLocs = 0;
 		PlaceId *reachableLocations = GvGetReachable(hv->gv, player, round, current, numReturnedLocs);
@@ -212,6 +220,9 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 {
 	if (player != PLAYER_DRACULA) {
 		Round round = HvGetRound(hv);
+		if (HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
+			round++;
+		}
 		PlaceId current = HvGetPlayerLocation(hv, player);
 		*numReturnedLocs = 0;
 		PlaceId *reachableByType = GvGetReachableByType(hv->gv, player, round, current, 
