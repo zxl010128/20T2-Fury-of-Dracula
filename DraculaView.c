@@ -366,9 +366,20 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
-	return NULL;
+	// get current round
+	Round cur_round = DvGetRound(dv);
+	// get current palce
+	PlaceId from = DvGetPlayerLocation(dv, PLAYER_DRACULA);
+	// check current player
+	if (GvGetPlayer(dv->gv) != PLAYER_LORD_GODALMING) {
+		cur_round++;	
+	}
+	int numLocs = -1;
+	PlaceId *locs = GvGetReachableByType(dv->gv, player, cur_round, from, road, rail, boat, &numLocs);
+	
+	*numReturnedLocs = numLocs;	
+	return locs;
 }
 
 ////////////////////////////////////////////////////////////////////////
