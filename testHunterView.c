@@ -287,7 +287,7 @@ int main(void)
 		printf("Test passed!\n");
 	}
 
-	{///////////////////////////////////////////////////////////////////
+	/*{///////////////////////////////////////////////////////////////////
 		
 		printf("Testing shortest path 1\n");
 		
@@ -363,7 +363,7 @@ int main(void)
 		
 		HvFree(hv);
 		printf("Test passed!\n");
-	}
+	}*/
 	
 	{///////////////////////////////////////////////////////////////////
 	
@@ -474,7 +474,7 @@ int main(void)
 		printf("Testing Dracula's last known location when there is no known location\n");
 		
 		char *trail =
-			"GGE.... SGE.... HVI.... MGE.... DC?T... "
+			"GGE.... SGE.... HVI.... MGE.... DST.V.. "
 			"GGE.... SGE.... HVI.... MGE.... DC?T... "
 			"GGE.... SGE.... HVI.... MGE.... DC?T... "
 			"GGE.... SGE.... HVI.... MGE.... DC?T... "
@@ -485,7 +485,7 @@ int main(void)
 		
 		assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
 		Round round = -1;
-		assert(HvGetLastKnownDraculaLocation(hv, &round) == NOWHERE);
+		assert(HvGetLastKnownDraculaLocation(hv, &round) == STRASBOURG);
 		assert(round == 0);
 
 		HvFree(hv);
@@ -518,5 +518,325 @@ int main(void)
 		printf("Test passed!\n");
 	}
 
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking current player Dr Seward raod, rail and boat connections "
+		       "(Dr Seward, Round 1)\n");
+		
+		char *trail = "GLS.... SRO.... HGE.... MGE.... DST.V.. "
+					  "GCA....";
+
+		Message messages[6] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanIGo(hv, &numLocs);
+
+		assert(numLocs == 6);
+		sortPlaces(locs, numLocs);			
+		assert(locs[0] == BARI);
+		assert(locs[1] == FLORENCE);
+		assert(locs[2] == MILAN);
+		assert(locs[3] == NAPLES);
+		assert(locs[4] == ROME);
+		assert(locs[5] == TYRRHENIAN_SEA);			
+		free(locs);
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+	
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking current player PLAYER_VAN_HELSING raod, rail and boat connections "
+		       "(Dr Seward, Round 0)\n");
+		
+		char *trail = "GLS.... SRO....";
+
+		Message messages[2] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanIGo(hv, &numLocs);
+
+		assert(numLocs == 0);			
+		assert(locs == NULL);		
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking current player Lord Godalming raod connections "
+		       "(Lord Godalming, Round 1)\n");
+		
+		char *trail = "GGA.... SRO.... HGE.... MGE.... DST.V.. ";
+
+		Message messages[5] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanIGoByType(hv, true, false, false, &numLocs);
+
+		assert(numLocs == 5);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BUCHAREST);
+		assert(locs[1] == CASTLE_DRACULA);
+		assert(locs[2] == CONSTANTA);
+		assert(locs[3] == GALATZ);
+		assert(locs[4] == KLAUSENBURG);
+		free(locs);
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking current player Lord Godalming boat connections "
+		       "(Lord Godalming, Round 1)\n");
+		
+		char *trail = "GIO.... SRO.... HGE.... MGE.... DST.V.. ";
+
+		Message messages[5] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanIGoByType(hv, false, false, true, &numLocs);
+
+		assert(numLocs == 7);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == ADRIATIC_SEA);
+		assert(locs[1] == ATHENS);
+		assert(locs[2] == BLACK_SEA);
+		assert(locs[3] == IONIAN_SEA);
+		assert(locs[4] == SALONICA);
+		assert(locs[5] == TYRRHENIAN_SEA);
+		assert(locs[6] == VALONA);
+		free(locs);
+
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking current player Lord Godalming rail connections "
+		       "(Lord Godalming, Round 2)\n");
+		
+		char *trail = "GPA.... SRO.... HGE.... MGE.... DST.V.. "
+					  "GPA.... SRO.... HGE.... MGE.... DC?T... ";
+
+		Message messages[10] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanIGoByType(hv, false, true, false, &numLocs);
+
+		assert(numLocs == 7);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BORDEAUX);
+		assert(locs[1] == BRUSSELS);
+		assert(locs[2] == COLOGNE);
+		assert(locs[3] == LE_HAVRE);
+		assert(locs[4] == MARSEILLES);
+		assert(locs[5] == PARIS);
+		assert(locs[6] == SARAGOSSA);
+		free(locs);
+
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking current player Lord Godalming rail connections "
+		       "(Lord Godalming, Round 3)\n");
+		
+		char *trail = "GLI.... SRO.... HGE.... MGE.... DST.V.. "
+					  "GLI.... SRO.... HGE.... MGE.... DC?T... "
+					  "GFR.... SRO.... HGE.... MGE.... DC?T... ";
+
+		Message messages[15] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanIGoByType(hv, false, true, false, &numLocs);
+
+		assert(numLocs == 13);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BERLIN);
+		assert(locs[1] == BRUSSELS);
+		assert(locs[2] == COLOGNE);
+		assert(locs[3] == FRANKFURT);
+		assert(locs[4] == HAMBURG);
+		assert(locs[5] == LEIPZIG);
+		assert(locs[6] == MILAN);
+		assert(locs[7] == MUNICH);
+		assert(locs[8] == NUREMBURG);
+		assert(locs[9] == PARIS);
+		assert(locs[10] == PRAGUE);
+		assert(locs[11] == STRASBOURG);
+		assert(locs[11] == STRASBOURG);
+		assert(locs[11] == STRASBOURG);
+		assert(locs[12] == ZURICH);
+		free(locs);
+
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking current player Dr Seward raod, rail and boat connections "
+		       "(Dr Seward, Round 1)\n");
+		
+		char *trail = "GLO.... SRO.... HGE.... MGE.... DST.V.. "
+					  "GLO....";
+
+		Message messages[6] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanIGoByType(hv, true, true, true, &numLocs);
+
+		assert(numLocs == 6);
+		sortPlaces(locs, numLocs);			
+		assert(locs[0] == BARI);
+		assert(locs[1] == FLORENCE);
+		assert(locs[2] == MILAN);
+		assert(locs[3] == NAPLES);
+		assert(locs[4] == ROME);
+		assert(locs[5] == TYRRHENIAN_SEA);			
+		free(locs);
+
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking current player Mina Harker raod, rail and boat connections "
+		       "(Mina Harker, Round 1)\n");
+		
+		char *trail = "GLO.... SRO.... HGE.... MCN.... DST.V.. "
+					  "GLO.... SRO.... HGE.... MGA.... DC?T... "
+					  "GLO.... SRO.... HGE.... MCN.... DC?T... "
+					  "GLO.... SRO.... HGE.... MGA.... DC?T... "
+					  "GLO.... SRO.... HGE.... MGA.... DC?T... "
+					  "GLO.... SRO.... HGE.... MCN.... DC?T... "
+					  "GLO.... SRO.... HGE.... MCN.... DC?T... "
+					  "GLO.... SRO.... HGE.... MCn.... DC?T... "
+					  "GLO.... SRO.... HGE....";
+
+		Message messages[43] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanIGoByType(hv, true, true, true, &numLocs);
+
+		assert(numLocs == 8);
+		sortPlaces(locs, numLocs);			
+		assert(locs[0] == BELGRADE);
+		assert(locs[1] == BLACK_SEA);
+		assert(locs[2] == BUCHAREST);
+		assert(locs[3] == BUDAPEST);
+		assert(locs[4] == CONSTANTA);
+		assert(locs[5] == GALATZ);	
+		assert(locs[6] == SZEGED);
+		assert(locs[7] == VARNA);				
+		free(locs);
+
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+	
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking other player Dr Seward raod, rail and boat connections "
+		       "(Dr Seward, Round 1)\n");
+		
+		char *trail = "GGA.... SRO.... HAL....";
+		Message messages[3] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanTheyGo(hv, PLAYER_DR_SEWARD, &numLocs);
+
+		assert(numLocs == 6);
+		sortPlaces(locs, numLocs);			
+		assert(locs[0] == BARI);
+		assert(locs[1] == FLORENCE);
+		assert(locs[2] == MILAN);
+		assert(locs[3] == NAPLES);
+		assert(locs[4] == ROME);
+		assert(locs[5] == TYRRHENIAN_SEA);			
+		free(locs);
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking other player Mina Harker raod, rail and boat connections "
+		       "(Mina Harker, Round 8)\n");
+		
+		char *trail =
+			"GAS.... SVI.... HAL.... MGA.... DLS.V.. "
+			"GAS.... SPR.... HBA.... MGA.... DC?T... "
+			"GAS.... SPR.... HAL.... MGA.... DC?T... "
+			"GAS.... SPR.... HAL.... MBC.... DCAT... " 
+			"GVE.... SPR.... HSR.... MBC.... DD1T... "
+			"GVE.... SZA.... HMA.... MBE.... DGRT... "
+			"GMU.... SZA.... HGR.... MBC.... DCA.V.. "
+			"GMU.... SBR.... HGR.... MCN.... DMAT... ";
+
+		Message messages[40] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanTheyGo(hv, PLAYER_MINA_HARKER, &numLocs);
+		
+		assert(numLocs == 8);
+		sortPlaces(locs, numLocs);			
+		assert(locs[0] == BELGRADE);
+		assert(locs[1] == BLACK_SEA);
+		assert(locs[2] == BUCHAREST);
+		assert(locs[3] == BUDAPEST);
+		assert(locs[4] == CONSTANTA);
+		assert(locs[5] == GALATZ);	
+		assert(locs[6] == SZEGED);
+		assert(locs[7] == VARNA);				
+		free(locs);
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking other player Mina Harker raod, rail and boat connections "
+		       "(Mina Harker, Round 8)\n");
+		
+		char *trail =
+			"GAS.... SVI.... HAL.... MGA.... DLS.V.. "
+			"GAS.... SPR.... HBA.... MGA.... DC?T... ";
+
+		Message messages[10] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanTheyGo(hv, PLAYER_DRACULA, &numLocs);
+		
+		assert(numLocs == 0);			
+		assert(locs == NULL);
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
 	return EXIT_SUCCESS;
+
 }
