@@ -179,7 +179,7 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 {
 	if (player != PLAYER_DRACULA) {
 		Round round = HvGetRound(hv);
-		if (HvGetPlayer(hv)!= PLAYER_LORD_GODALMING) {
+		if (HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
 			round++;
 		}
 		PlaceId current = HvGetPlayerLocation(hv, player);
