@@ -1326,11 +1326,15 @@ void GvTrapProc(GameView gv)
 int GvGetTotalMoves(GameView gv, Player player) {
     
     int num = 0;
-    for (int i = 0; i < TRAIL_SIZE; i++) {
+	int round_num = GvGetRound(gv);
+	int i = 0;
+	while (i < round_num) {
         if(gv->players[player].history[i] != NOWHERE){
             num++;
         }
-    }
+		i++;
+	}
+
     return num;
 }
 
@@ -1338,11 +1342,14 @@ int GvGetTotalMoves(GameView gv, Player player) {
 int GvGetTotalLocations(GameView gv, Player player) {
     
     int num = 0;
-    for (int i = 0; i < TRAIL_SIZE; i++) {
+	int i = 0;
+	int round_num = GvGetRound(gv);
+	while (i < round_num) {
         if(gv->players[player].locHistory[i] != NOWHERE){
             num++;
         }
-    }
+		i++;
+	}
+
     return num;
 }
-	
