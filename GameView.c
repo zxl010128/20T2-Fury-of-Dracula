@@ -298,7 +298,7 @@ void GvDraculaMove(GameView gv, PlaceId city)
 	case DOUBLE_BACK_4:
 	case DOUBLE_BACK_5://test6?
 		n = city - DOUBLE_BACK_1;
-		if(n > 0){
+		if(n >= 0){
 			GvAddHistory(player, player->move);	//Record historical information
 			player->current = player->history[n - 0];
 			player->move = city;
