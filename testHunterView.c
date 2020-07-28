@@ -469,5 +469,54 @@ int main(void)
 		printf("Test passed!\n");	
 	}
 	
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Testing Dracula's last known location when there is no known location\n");
+		
+		char *trail =
+			"GGE.... SGE.... HVI.... MGE.... DC?T... "
+			"GGE.... SGE.... HVI.... MGE.... DC?T... "
+			"GGE.... SGE.... HVI.... MGE.... DC?T... "
+			"GGE.... SGE.... HVI.... MGE.... DC?T... "
+			"GGE.... SGE.... HVI.... MGE.... DC?T... ";
+	
+		Message messages[25] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
+		Round round = -1;
+		assert(HvGetLastKnownDraculaLocation(hv, &round) == NOWHERE);
+		assert(round == 0);
+
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Testing Dracula's last known location case 2\n");
+		
+		char *trail =
+			"GLS.... SGE.... HGE.... MGE.... DST.V.. "
+			"GCA.... SGE.... HGE.... MGE.... DC?T... "
+			"GGR.... SGE.... HGE.... MGE.... DC?T... "
+			"GAL.... SGE.... HGE.... MGE.... DD3T... "
+			"GSR.... SGE.... HGE.... MGE.... DHIT... "
+			"GSN.... SGE.... HGE.... MGE.... DC?T... "
+			"GMA.... SSTTTV.";
+	
+		Message messages[32] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
+		Round round = -1;
+		assert(HvGetLastKnownDraculaLocation(hv, &round) == STRASBOURG);
+		printf("%d\n", round);
+		assert(round == 4);
+
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
 	return EXIT_SUCCESS;
 }
