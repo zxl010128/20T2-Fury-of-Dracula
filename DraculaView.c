@@ -18,25 +18,16 @@
 #include "Game.h"
 #include "GameView.h"
 #include "Map.h"
-// add your own #includes here
 
-// TODO: ADD YOUR OWN STRUCTS HERE
-
-struct draculaView {
-	// TODO: ADD FIELDS HERE
-	GameView gv;
-
-};
-
-// helper function
+// helper function declaration
 int isCotainDBMove(PlaceId *moves, int numMoves);
 int isCotainHIMove(PlaceId *moves, int numMoves);
 void array_Delete(PlaceId *array, int size, int id);
 int array_Find(PlaceId *array, int size, PlaceId city);
 
-
-#define MAXIMUM_CITY 128	
-
+struct draculaView {	
+	GameView gv;
+};
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -48,7 +39,7 @@ DraculaView DvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate DraculaView\n");
 		exit(EXIT_FAILURE);
 	}
-
+	// create game
 	dv->gv = GvNew(pastPlays, messages);
 
 	return dv;
@@ -57,9 +48,9 @@ DraculaView DvNew(char *pastPlays, Message messages[])
 void DvFree(DraculaView dv)
 {
 	GvFree(dv->gv);
-
 	free(dv);
 }
+
 ////////////////////////////////////////////////////////////////////////
 // Game State Information
 
@@ -199,7 +190,7 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	// using GvGetLastLocation to get the drac location history within last 5 rounds
 	int num_LastLocs = -1; 
 	bool canFree = false;
-    PlaceId *lastLocs = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5, &num_LastLocs, &canFree);
+   	PlaceId *lastLocs = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5, &num_LastLocs, &canFree);
 	// remove the intersecting places between canGoLocs and moves within last 5 rounds
 	int in_ckeck = 0;
 	while (in_ckeck < num_LastLocs) {
@@ -265,27 +256,27 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 	int count = 0;
 	// get current palce
 	PlaceId from = DvGetPlayerLocation(dv, PLAYER_DRACULA);
-	// using GvGetReachableByType fun to get the adjacent palces with 'from'
+	// using GvGetReachableByType fun to get the adjacent palces with 'from' (in different type)
 	int numLocs = -1;
 	PlaceId *locs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, cur_round, from, road, false, boat, &numLocs);
 	// store the locs places in canGoLocs
 	for (count = 0; count < numLocs; count++) {
 		canGoLocs[count] = locs[count];
 	}
-	//
+	// using GvGetReachable fun to get the adjacent palces with 'from' 
 	numLocs = -1;
 	PlaceId *locs_alltype = GvGetReachable(dv->gv, PLAYER_DRACULA, cur_round, from, &numLocs);
 	// an array to store adjacent locations
 	PlaceId adjacentLocs[NUM_REAL_PLACES];
 	int num_adjacent = 0;
-	// store the locs places in adjacentLocs
+	// store the locs places in adjacentLocs (all type)
 	for (num_adjacent = 0; num_adjacent < numLocs; num_adjacent++) {
 		adjacentLocs[num_adjacent] = locs_alltype[num_adjacent];
 	}
 	// using GvGetLastLocation to get the drac location history within last 5 rounds
 	int num_LastLocs = -1; 
 	bool canFree = false;
-    PlaceId *lastLocs = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5, &num_LastLocs, &canFree);
+   	PlaceId *lastLocs = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5, &num_LastLocs, &canFree);
 	// remove the intersecting places between canGoLocs and moves within last 5 rounds
 	int in_ckeck = 0;
 	while (in_ckeck < num_LastLocs) {
@@ -373,7 +364,6 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 	}
 	int numLocs = -1;
 	PlaceId *locs = GvGetReachableByType(dv->gv, player, cur_round, from, road, rail, boat, &numLocs);
-	
 	*numReturnedLocs = numLocs;	
 	return locs;
 }
@@ -383,27 +373,28 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 
 // A function to check whether a given array contains Double Back Moves
 // if true retrn 1, else return 0
-int isCotainDBMove(PlaceId *moves, int numMoves) {
+int isCotainDBMove(PlaceId *moves, int numMoves) 
+{
 	int check = numMoves - 1;
-    while (check >= 0) {
+	while (check >= 0) {
         if (moves[check] == DOUBLE_BACK_1 || moves[check] == DOUBLE_BACK_2 
 			|| moves[check] == DOUBLE_BACK_3 || moves[check] == DOUBLE_BACK_4
 			|| moves[check] == DOUBLE_BACK_5) {
-            return 1;
+        	return 1;
         } 
         check--;
     }
 	return 0;
-
 }
 
 // A function to check whether a given array contains HIDE Moves
 // if true retrn 1, else return 0
-int isCotainHIMove(PlaceId *moves, int numMoves) {
+int isCotainHIMove(PlaceId *moves, int numMoves) 
+{
 	int check = 0;
     while (check < numMoves) {
 		if (moves[check] == HIDE) {
-            return 1;			
+        	return 1;			
 		} 
 		check++;
     }
@@ -411,7 +402,8 @@ int isCotainHIMove(PlaceId *moves, int numMoves) {
 }
 
 // A function to delete id index place in an array
-void array_Delete(PlaceId *array, int size, int id) {
+void array_Delete(PlaceId *array, int size, int id) 
+{
 	if (size <= 0 || id < 0 || id >= size) {
 		return;
 	}
@@ -421,7 +413,8 @@ void array_Delete(PlaceId *array, int size, int id) {
 
 // A function to check whether a given array contain the city
 // if ture return the index in array, else return -1
-int array_Find(PlaceId *array, int size, PlaceId city) {
+int array_Find(PlaceId *array, int size, PlaceId city) 
+{
 	for (int i = 0; i < size; i++) {
 		if (array[i] == city) {
 			return i;
