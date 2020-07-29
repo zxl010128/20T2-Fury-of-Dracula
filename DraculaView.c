@@ -239,7 +239,7 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	}
 	// if drac did not have hide move
 	// current palce is not SEA
-	// add hide move to vail moves	
+	// add current palce to canGoLocs	
 	if (!contain_HI && !placeIsSea(from)) {
 		int hi_find = array_Find(canGoLocs, count, from);
 		if (hi_find == -1) {
@@ -249,11 +249,11 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	} 
 	// assign the numReturnedLocs value
 	*numReturnedLocs = count;
-	// If  Dracula  has no valid moves	
+	// If  Dracula  has no reachable locations	
 	if (count == 0) {
 		return NULL;
 	} else { 
-		// make all target moves in a dynamically allocated array
+		// make all target locs in a dynamically allocated array
 		PlaceId *ReturnedLocs = malloc(sizeof(PlaceId) * count);
 		for (int j = 0; j < count; j++) {
 			ReturnedLocs[j] = canGoLocs[j];
@@ -276,14 +276,19 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 	// using GvGetReachableByType fun to get the adjacent palces with 'from'
 	int numLocs = -1;
 	PlaceId *locs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, cur_round, from, road, false, boat, &numLocs);
-	// an array to store adjacent locations
-	PlaceId adjacentLocs[NUM_REAL_PLACES];
-	int num_adjacent = 0;
 	// store the locs places in canGoLocs
 	for (count = 0; count < numLocs; count++) {
 		canGoLocs[count] = locs[count];
-		adjacentLocs[num_adjacent] = locs[count];
-		num_adjacent++;
+	}
+	//
+	numLocs = -1;
+	PlaceId *locs_alltype = GvGetReachable(dv->gv, PLAYER_DRACULA, cur_round, from, &numLocs);
+	// an array to store adjacent locations
+	PlaceId adjacentLocs[NUM_REAL_PLACES];
+	int num_adjacent = 0;
+	// store the locs places in adjacentLocs
+	for (num_adjacent = 0; num_adjacent < numLocs; num_adjacent++) {
+		adjacentLocs[num_adjacent] = locs_alltype[num_adjacent];
 	}
 	// using GvGetLastLocation to get the drac location history within last 5 rounds
 	int num_LastLocs = -1; 
@@ -316,11 +321,10 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 				count++;					
 			}
 		}
-
 	}
 	// if drac did not have hide move
 	// current palce is not SEA
-	// add hide move to vail moves	
+	// add current palce to canGoMove	
 	if (!contain_HI && !placeIsSea(from)) {
 		int hi_find = array_Find(canGoLocs, count, from);
 		if (hi_find == -1) {
@@ -330,11 +334,11 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 	} 
 	// assign the numReturnedLocs value
 	*numReturnedLocs = count;
-	// If  Dracula  has no valid moves	
+	// If  Dracula  has no reachable locations	
 	if (count == 0) {
 		return NULL;
 	} else { 
-		// make all target moves in a dynamically allocated array
+		// make all target locs in a dynamically allocated array
 		PlaceId *ReturnedLocs = malloc(sizeof(PlaceId) * count);
 		for (int j = 0; j < count; j++) {
 			ReturnedLocs[j] = canGoLocs[j];
