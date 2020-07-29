@@ -21,13 +21,38 @@
 #include "Places.h"
 // add your own #includes here
 
-bool placeRealCheck(PlaceId pid);
+#define ItemCopy(i)     (i)
+#define ItemEQ(i1,i2)   ((i1) == (i2))
+#define ItemShow(i)     printf("%d",(i))
+
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 struct hunterView {
 	// TODO: ADD FIELDS HERE
     GameView gv;
 };
+
+typedef PlaceId Item;
+
+typedef struct QueueNode {
+	Item value;
+	struct QueueNode *next;
+} QueueNode;
+
+typedef struct QueueRep {
+	QueueNode *head;  // ptr to first node
+	QueueNode *tail;  // ptr to last node
+} QueueRep;
+
+typedef struct QueueRep *Queue;
+
+Queue newQueue(); 				// create new empty queue
+void dropQueue(Queue); 			// free memory used by queue
+void showQueue(Queue); 			// display 
+void QueueJoin(Queue,Item); 	// add item on queue
+Item QueueLeave(Queue); 		// remove item from queue
+int QueueIsEmpty(Queue); 		// check for no items
+bool placeRealCheck(PlaceId pid);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -124,9 +149,89 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*pathLength = 0;
-	return NULL;
+	PlaceId current = HvGetPlayerLocation(hv, hunter);
+	
+	if (current == dest) {
+		PlaceId *path = malloc(sizeof(PlaceId));
+		path[0] = dest;
+		(*pathLength) = 1;
+		return path;
+	}
+
+	PlaceId temp_city;
+
+	int Path_length = 0;
+
+	int visited[NUM_REAL_PLACES] = {0};
+
+	PlaceId last_position[NUM_REAL_PLACES] = {[0 ... (NUM_REAL_PLACES-1)] = -1};
+
+	Queue cityQ = newQueue();
+	QueueJoin(cityQ, current);
+
+	int round[NUM_REAL_PLACES];
+	
+	round[current] = HvGetRound(hv);
+	
+	bool is_Found = false;
+
+	while (!QueueIsEmpty(cityQ) && !is_Found) {
+		
+		temp_city = QueueLeave(cityQ);
+
+		if (visited[temp_city] == 1) {
+			continue;
+		}
+
+		visited[temp_city] = 1;
+
+		int num_locs = 0;
+
+		PlaceId *locs = GvGetReachable(hv->gv, hunter, round[temp_city], temp_city, &num_locs);
+	
+		int i;
+		for (i = 0; i < num_locs; i++) {
+			
+			if (!visited[locs[i]] && last_position[locs[i]] == -1) {
+				last_position[locs[i]] = temp_city;
+				if (locs[i] == dest) {
+					is_Found = true;
+					break;
+				}
+				QueueJoin(cityQ, locs[i]);
+
+				int curr_round = round[temp_city];
+				round[locs[i]] = curr_round + 1;
+			}
+
+		}
+
+	}
+
+	dropQueue(cityQ);
+
+	if (is_Found == false) {
+		return NULL;
+	}
+
+	for (PlaceId position = dest; position != current; position = last_position[position]) Path_length++;
+	
+	PlaceId *ReturnedLocs = malloc(sizeof(PlaceId) * Path_length);
+
+	int array_index = Path_length - 1;
+	ReturnedLocs[array_index] = dest;
+	array_index--;
+
+	int temp = last_position[dest];
+	while (array_index >= 0) {
+		ReturnedLocs[array_index] = temp;
+		temp = last_position[temp];
+		array_index--;
+	}
+	
+	(*pathLength) = Path_length;
+	return ReturnedLocs;
+
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -267,4 +372,83 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 bool placeRealCheck(PlaceId pid)
 {
 	return pid >= MIN_REAL_PLACE && pid <= MAX_REAL_PLACE;
+}
+
+
+// create new empty Queue
+Queue newQueue()
+{
+	Queue q;
+	q = malloc(sizeof(QueueRep));
+	assert(q != NULL);
+	q->head = NULL;
+	q->tail = NULL;
+	return q;
+}
+
+// free memory used by Queue
+void dropQueue(Queue Q)
+{
+	QueueNode *curr, *next;
+	assert(Q != NULL);
+	// free list nodes
+	curr = Q->head;
+	while (curr != NULL) {
+		next = curr->next;
+		free(curr);
+		curr = next;
+	}
+	// free queue rep
+	free(Q);
+}
+
+// display as 3 > 5 > 4 > ...
+void showQueue(Queue Q)
+{
+	QueueNode *curr;
+	assert(Q != NULL);
+	// free list nodes
+	curr = Q->head;
+	while (curr != NULL) {
+		ItemShow(curr->value);
+		if (curr->next != NULL)
+			printf(">");
+		curr = curr->next;
+	}
+	printf("\n");
+}
+
+// add item at end of Queue
+void QueueJoin(Queue Q, Item it)
+{
+	assert(Q != NULL);
+	QueueNode *new = malloc(sizeof(QueueNode));
+	assert(new != NULL);
+	new->value = ItemCopy(it);
+	new->next = NULL;
+	if (Q->head == NULL)
+		Q->head = new;
+	if (Q->tail != NULL)
+		Q->tail->next = new;
+	Q->tail = new;
+}
+
+// remove item from front of Queue
+Item QueueLeave(Queue Q)
+{
+	assert(Q != NULL);
+	assert(Q->head != NULL);
+	Item it = ItemCopy(Q->head->value);
+	QueueNode *old = Q->head;
+	Q->head = old->next;
+	if (Q->head == NULL)
+		Q->tail = NULL;
+	free(old);
+	return it;
+}
+
+// check for no items
+int QueueIsEmpty(Queue Q)
+{
+	return (Q->head == NULL);
 }
