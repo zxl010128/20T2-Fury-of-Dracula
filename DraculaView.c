@@ -32,12 +32,12 @@ struct draculaView {
 // GameView function call
 //
 //---------------------------------------------------------------------------
-////
+
+// helper function
 int isCotainDBMove(PlaceId *moves, int numMoves);
 int isCotainHIMove(PlaceId *moves, int numMoves);
 void array_Delete(PlaceId *array, int size, int id);
 int array_Find(PlaceId *array, int size, PlaceId city);
-
 
 
 #define MAXIMUM_CITY 128	
@@ -389,6 +389,8 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
+// A function to check whether a given array contains Double Back Moves
+// if true retrn 1, else return 0
 int isCotainDBMove(PlaceId *moves, int numMoves) {
 	int check = numMoves - 1;
     while (check >= 0) {
@@ -402,6 +404,9 @@ int isCotainDBMove(PlaceId *moves, int numMoves) {
 	return 0;
 
 }
+
+// A function to check whether a given array contains HIDE Moves
+// if true retrn 1, else return 0
 int isCotainHIMove(PlaceId *moves, int numMoves) {
 	int check = 0;
     while (check < numMoves) {
@@ -413,6 +418,7 @@ int isCotainHIMove(PlaceId *moves, int numMoves) {
 	return 0;
 }
 
+// A function to delete id index place in an array
 void array_Delete(PlaceId *array, int size, int id) {
 	if (size <= 0 || id < 0 || id >= size) {
 		return;
@@ -421,6 +427,8 @@ void array_Delete(PlaceId *array, int size, int id) {
 	array[size - 1] = NOWHERE;
 }
 
+// A function to check whether a given array contain the city
+// if ture return the index in array, else return -1
 int array_Find(PlaceId *array, int size, PlaceId city) {
 	for (int i = 0; i < size; i++) {
 		if (array[i] == city) {
