@@ -112,7 +112,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	// using GvGetLastLocation to get the drac location history within last 5 rounds
 	int num_LastLocs = -1; 
 	bool canFree = false;
-    PlaceId *lastLocs = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5, &num_LastLocs, &canFree);
+	PlaceId *lastLocs = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5, &num_LastLocs, &canFree);
 	// remove the intersecting places between vaildMoves and moves within last 5 rounds
 	int in_ckeck = 0;
 	while (in_ckeck < num_LastLocs) {
@@ -126,7 +126,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	// using GvGetMoveHistory to get the drac move history
 	int numMoves = -1; 
 	bool canFree_2 = false;
-    PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree_2);
+	PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree_2);
 	// check whether drac have special moves before 5 rounds
 	int contain_DB = isCotainDBMove(moves, numMoves);
 	int contain_HI = isCotainHIMove(moves, numMoves);
@@ -141,7 +141,6 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 				count++;					
 			}
 		}
-
 	}
 	// if drac did not have hide move
 	// current palce is not SEA
@@ -204,7 +203,7 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	// using GvGetMoveHistory to get the drac move history
 	int numMoves = -1; 
 	bool canFree_2 = false;
-    PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree_2);
+	PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree_2);
 	// check whether drac have special moves before 5 rounds
 	int contain_DB = isCotainDBMove(moves, numMoves);
 	int contain_HI = isCotainHIMove(moves, numMoves);
@@ -218,7 +217,6 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 				count++;					
 			}
 		}
-
 	}
 	// if drac did not have hide move
 	// current palce is not SEA
@@ -290,7 +288,7 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 	// using GvGetMoveHistory to get the drac move history
 	int numMoves = -1; 
 	bool canFree_2 = false;
-    PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree_2);
+	PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree_2);
 	// check whether drac have special moves before 5 rounds
 	int contain_DB = isCotainDBMove(moves, numMoves);
 	int contain_HI = isCotainHIMove(moves, numMoves);
@@ -377,13 +375,13 @@ int isCotainDBMove(PlaceId *moves, int numMoves)
 {
 	int check = numMoves - 1;
 	while (check >= 0) {
-        if (moves[check] == DOUBLE_BACK_1 || moves[check] == DOUBLE_BACK_2 
+        	if (moves[check] == DOUBLE_BACK_1 || moves[check] == DOUBLE_BACK_2 
 			|| moves[check] == DOUBLE_BACK_3 || moves[check] == DOUBLE_BACK_4
 			|| moves[check] == DOUBLE_BACK_5) {
-        	return 1;
-        } 
+        		return 1;
+        	} 
         check--;
-    }
+	}
 	return 0;
 }
 
@@ -392,12 +390,12 @@ int isCotainDBMove(PlaceId *moves, int numMoves)
 int isCotainHIMove(PlaceId *moves, int numMoves) 
 {
 	int check = 0;
-    while (check < numMoves) {
+	while (check < numMoves) {
 		if (moves[check] == HIDE) {
-        	return 1;			
+        		return 1;			
 		} 
 		check++;
-    }
+	}
 	return 0;
 }
 
