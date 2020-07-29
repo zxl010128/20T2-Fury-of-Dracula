@@ -1052,18 +1052,6 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 //
 //---------------------------------------------------------------------------
 
-const char* GvPlaceTypeName(PlaceId city)
-{
-	switch(placeIdToType(city)){
-	case SEA:
-		return "海域";
-	case LAND:
-		return "陆地";
-	default:
-		return "无";
-	}
-}
-
 //Analyze player types
 Player GvParsePlayer(char ch)
 {
