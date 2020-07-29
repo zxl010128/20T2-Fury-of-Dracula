@@ -31,6 +31,8 @@
 - [x] uploaded the initial code files 
 - [x] uploaded struct completely
 - [x] finished all GameView.c and TestGameView.c
+- [x] finished all HunterView.c and TestHunterView.c
+- [x] finished all DraculaView.c and TestDraculaView.c
 
 #### **Due: 23:59 on Fri 31 July**
 - [ ] submit 3 views code
