@@ -27,11 +27,6 @@ struct draculaView {
 	GameView gv;
 
 };
-//---------------------------------------------------------------------------
-//
-// GameView function call
-//
-//---------------------------------------------------------------------------
 
 // helper function
 int isCotainDBMove(PlaceId *moves, int numMoves);
@@ -41,9 +36,6 @@ int array_Find(PlaceId *array, int size, PlaceId city);
 
 
 #define MAXIMUM_CITY 128	
-
-//Count the number of lists
-extern const char* GvPlayerName(Player id);
 
 
 ////////////////////////////////////////////////////////////////////////
