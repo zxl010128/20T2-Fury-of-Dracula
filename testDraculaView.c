@@ -699,7 +699,7 @@ int main(void)
 	}
 	
 	{///////////////////////////////////////////////////////////////////
-		printf("Test for They's valid moves by type\n");
+		printf("Test for DvWhereCanTheyGo 1\n");
 
 		char *trail =
 		    "GGE.... SGE.... HGE.... MGE.... DCD.V.. "
@@ -722,7 +722,7 @@ int main(void)
     	}
 
     	{///////////////////////////////////////////////////////////////////   
-		printf("Test for They's valid moves by type\n");
+		printf("Test for DvWhereCanTheyGoByType 1\n");
 
 		char *trail =
 		    "GGE.... SGE.... HGE.... MBA.... DCD.V.. "
@@ -733,7 +733,7 @@ int main(void)
 
 		int numMoves = -1;
 		PlaceId *moves = DvWhereCanTheyGoByType(dv, PLAYER_MINA_HARKER,
-		    false, false, true, &numMoves);
+		    					false, false, true, &numMoves);
 		assert(numMoves == 1);
 		sortPlaces(moves, numMoves);
 		assert(moves[0] == CASTLE_DRACULA);
@@ -743,8 +743,8 @@ int main(void)
 		DvFree(dv);
     	}
 
-    	{///////////////////////////////////////////////////////////////////   
-		printf("Test for valid moves by type\n");
+    	{  
+		printf("Test for DvWhereCanTheyGoByType 2\n");
 
 		char *trail =
 		    "GGE.... SGE.... HGE.... MBA.... DKL.V.. "
@@ -756,21 +756,9 @@ int main(void)
 		Message messages[24] = {};
 		DraculaView dv = DvNew(trail, messages);
 
-		int numLocs = -1;
-		PlaceId *locs = DvWhereCanIGo(dv, &numLocs);
-
-		assert(numLocs == 5);
-		sortPlaces(locs, numLocs);
-		assert(locs[0] == BUDAPEST);
-		assert(locs[1] == KLAUSENBURG);
-		assert(locs[2] == SZEGED);
-		assert(locs[3] == VIENNA);
-		assert(locs[4] == ZAGREB);
-		free(locs);
-
 		int numMoves = -1;
 		PlaceId* moves = DvWhereCanTheyGoByType(dv, PLAYER_LORD_GODALMING,
-		    false, true, true, &numMoves);
+		    					false, true, true, &numMoves);
 		assert(numMoves == 3);
 		sortPlaces(moves, numMoves);
 		assert(moves[0] == BUDAPEST);
@@ -780,6 +768,6 @@ int main(void)
 
 		printf("Test passed!\n");
 		DvFree(dv);
-		}
+	}
 		return EXIT_SUCCESS;
 }
