@@ -325,11 +325,16 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
+	// if the given player is hunter
 	if (player != PLAYER_DRACULA) {
+		
+		// get the next round
 		Round round = HvGetRound(hv);
 		if (HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
 			round++;
 		}
+		
+		// get all the reachableLocations
 		PlaceId current = HvGetPlayerLocation(hv, player);
 		*numReturnedLocs = 0;
 		PlaceId *reachableLocations = GvGetReachable(hv->gv, player, round, current, numReturnedLocs);
@@ -341,13 +346,18 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 
 		return reachableLocations;
 
+	// if the given player is Darcula
 	} else {
+		
+		// if Darcula's current location is unknown
 		PlaceId check = HvGetPlayerLocation(hv, player);
 		if (check == CITY_UNKNOWN || check == SEA_UNKNOWN) {
 			*numReturnedLocs = 0;
 			return NULL;
 
 		} else {
+			
+			// get all the reachableLocations
 			Round round = HvGetRound(hv);
 			*numReturnedLocs = 0;
 			PlaceId *reachableLocations = GvGetReachable(hv->gv, player, round, check, numReturnedLocs);
@@ -367,11 +377,16 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
+	// if the given player is hunter
 	if (player != PLAYER_DRACULA) {
+		
+		// get the next round
 		Round round = HvGetRound(hv);
 		if (HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
 			round++;
 		}
+		
+		// get all the reachableLocations
 		PlaceId current = HvGetPlayerLocation(hv, player);
 		*numReturnedLocs = 0;
 		PlaceId *reachableByType = GvGetReachableByType(hv->gv, player, round, current, 
@@ -384,13 +399,18 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 
 		return reachableByType;
 
+	// if the given player is Darcula
 	} else {
+		
+		// if Darcula's current location is unknown
 		PlaceId check = HvGetPlayerLocation(hv, player);
 		if (check == CITY_UNKNOWN || check == SEA_UNKNOWN) {
 			*numReturnedLocs = 0;
 			return NULL;
 
 		} else {
+			
+			// get all the reachableLocations
 			Round round = HvGetRound(hv);
 			*numReturnedLocs = 0;
 			PlaceId *reachableByType = GvGetReachableByType(hv->gv, player, round, check, 
