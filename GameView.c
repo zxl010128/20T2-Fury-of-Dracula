@@ -586,11 +586,14 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 	PlaceId *trap = malloc(sizeof(PlaceId) * MAXIMUM_CITY * MAXIMUM_TRAP);
 	int num = 0;
 	EncounterInfo ev;
-
+	
+	// check every city for traps
 	for (int i = 0; i < MAXIMUM_CITY; i++) {
 		ev = gv->encounters[i];
 		for (int j = 0; j < MAXIMUM_TRAP; j++) {
 			if (ev[j].type == EncounterTrap) {
+				
+				// if the city has a trap, add the city to the array
 				trap[num] = i;
 				num++; 
 			}
