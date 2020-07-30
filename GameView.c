@@ -181,9 +181,8 @@ void GvSetPlayer(GameView gv, Player id)
 void GvMovePlayer(GameView gv, Player id, PlaceId city)
 {
 	PlayerInfo player = &gv->players[id];
-	//GvAddHistory(player->current);
+
 	player->current = city;
-	//printf("    %-10s comes to %s\n", GvPlayerName(player->ID), placeIdToName(city));
 }
 
 //The game score changes. 
@@ -221,16 +220,16 @@ void GvHunterMove(GameView gv, PlaceId city)
 	case TELEPORT:
 	case UNKNOWN_PLACE:
 	case NOWHERE:
-		printf("    %-10s cannot perform these actions.\n", GvPlayerName(player->ID));
+
 		break;
-	default://Ordinary move
+	default:					//Ordinary move
 		GvAddHistory(player, player->move);	//Record the previous move method first
 		last = player->current;			//Record the last moved city
 		player->current = city;	
 		player->move = city;
 		GvAddLocationHistory(gv, player, city);	//Record the location of this move
 
-		printf("    %-10s comes to %s\n", GvPlayerName(player->ID), placeIdToName(city));
+
 		GvPlayerRest(gv, player);
 		if(last == city){			//Same as last time, rest and restore life
 			GvPlayerRest(gv, player);
@@ -252,10 +251,10 @@ void GvOnHitHunter(GameView gv, Player id)
 	//The hunter is dead
 	player->blood = 0;
 	GvChangeScore(gv, -SCORE_LOSS_HUNTER_HOSPITAL);
-	printf("    After a fierce battle, %-10s was seriously injured.\n", GvPlayerName(id));
+
 	GvMovePlayer(gv, id, HOSPITAL_PLACE);
-	printf("    %-10s was sent to %s\n", GvPlayerName(id), placeIdToName(HOSPITAL_PLACE));
-	printf("    Game current score：%d\n", gv->score);
+
+
 
 	//Count the dead players
 	//if all of them die, judge Dracula to win
@@ -289,9 +288,6 @@ void GvDraculaMove(GameView gv, PlaceId city)
 		GvAddHistory(player, player->move);
 		GvAddLocationHistory(gv, player, player->current);
 		player->move = city;
-		
-		printf("    %-10s hid the whereabouts.\n", GvPlayerName(player->ID));
-
 		break;
 	case DOUBLE_BACK_1:	
 	case DOUBLE_BACK_2:
@@ -312,8 +308,6 @@ void GvDraculaMove(GameView gv, PlaceId city)
 			GvAddLocationHistory(gv, player, player->current);
 		}
 
-		//Event description
-		printf("    %-10s step back %d steps and came to %s\n", GvPlayerName(player->ID), n+1, placeIdToName(player->current));
 		
 		//Water detection
 		GvPlayerRest(gv, player);
@@ -324,7 +318,7 @@ void GvDraculaMove(GameView gv, PlaceId city)
 		player->current = CASTLE_DRACULA;
 		player->move = city;
 		GvAddLocationHistory(gv, player, player->current);
-		printf("    %-10s was teleported to %s\n", GvPlayerName(player->ID), placeIdToName(CASTLE_DRACULA));
+
 		GvPlayerRest(gv, player);//Rest
 		break;
 	case UNKNOWN_PLACE:
@@ -336,7 +330,6 @@ void GvDraculaMove(GameView gv, PlaceId city)
 		player->move = city;
 		GvAddLocationHistory(gv, player, city);	//Record the location of this move
 
-		printf("    %-10s comes to %s\n", GvPlayerName(player->ID), placeIdToName(city));
 		//Dracula moving event
 		GvPlayerRest(gv, player);
 		break;
@@ -440,14 +433,13 @@ void GvRunGame(GameView gv, char* pastPlays, Message messages[])
 					//Refresh a vampire every 13 rounds
 					if((gv->round % 13) == 0){
 						GvAddVampire(gv, cityID);
-						printf("    %-10s born in %10s\n", "Vampire", placeIdToName(cityID));
+
 					}
 				}
 				else{	//Hunter incident, encounter a vampire
                      			//the vampire will be destroyed, the hunter will not be injured
 					GvRemoveVampire(gv);
-					printf("    %-10s faught with vamp in %10s, vamp vanished\n", 
-						GvPlayerName(id), placeIdToName(cityID));
+
 				}
 				break;
 			case 'T':	//Trap
@@ -461,32 +453,26 @@ void GvRunGame(GameView gv, char* pastPlays, Message messages[])
 					if(gv->round % 13 != 0){
 						int location = GvGetPlayerLocation(gv, PLAYER_DRACULA);
 						GvPushTrap(gv, location);
-						printf("    %-10s placed a trap in %10s\n", GvPlayerName(id), placeIdToName(location));
+
 					}
 				}
 				else{//Hunter encounters a trap
 					GvRemoveTrap(gv, cityID);
 					gv->players[id].blood -= LIFE_LOSS_TRAP_ENCOUNTER;
-					printf("    %-10s encounters the trap in %10s and lost blood %d\n", GvPlayerName(id), placeIdToName(cityID), LIFE_LOSS_TRAP_ENCOUNTER);
 					GvOnHitHunter(gv, id);	//Hunter injured
 				}
 				break;
 			case 'D'://Hunter and Dracula encounter
-				printf("    %-10s met with %s at %s.\n", GvPlayerName(id), GvPlayerName(PLAYER_DRACULA), placeIdToName(cityID));
 				//hunter loos blood
 				gv->players[id].blood -= LIFE_LOSS_DRACULA_ENCOUNTER;
-				printf("      %-10s lost blood: %d, remain：%d\n",
 				GvPlayerName(id), LIFE_LOSS_DRACULA_ENCOUNTER, gv->players[id].blood);
 				GvOnHitHunter(gv, id);		//Hunter injured
 
-				//德古拉掉血
+				//Dracula Hurts
 				gv->players[PLAYER_DRACULA].blood -= LIFE_LOSS_HUNTER_ENCOUNTER;
-				printf("      %-10s lost blood：%d，remain：%d\n",
-				GvPlayerName(PLAYER_DRACULA), LIFE_LOSS_HUNTER_ENCOUNTER, gv->players[PLAYER_DRACULA].blood);
 				GvOnHitDracula(gv);		//Dracula injured
 				break;
 			default:
-				printf("Unknown message：%c\n", turn[j]);
 				break;
 			}
 		}
@@ -1209,14 +1195,11 @@ void GvPlayerRest(GameView gv, PlayerInfo player)
 		//In the water
 		if(placeIdToType(player->current) == SEA){
 			player->blood -= LIFE_LOSS_SEA;
-			printf("    %-10s was eroded by sea water and the blood is reduced by %d.\n", GvPlayerName(player->ID), LIFE_LOSS_SEA);
 			GvOnHitDracula(gv);	//Dracula hurts~
 		}
 		//Rest in castle
 		else if(player->current == CASTLE_DRACULA){
 			player->blood += LIFE_GAIN_CASTLE_DRACULA;
-			printf("    %-10s was cultivated in a comfortable castle and the blood increased by %d，current blood %d。\n", 
-				GvPlayerName(player->ID), LIFE_GAIN_CASTLE_DRACULA, player->blood);
 		}
 	}
 	//Hunter gets rest
@@ -1224,9 +1207,7 @@ void GvPlayerRest(GameView gv, PlayerInfo player)
 		player->blood += LIFE_GAIN_REST;
 		//Maximum HP cap
 		if(player->blood > GAME_START_HUNTER_LIFE_POINTS)player->blood = GAME_START_HUNTER_LIFE_POINTS;
-		printf("    %-10s rest in %s blood increased by %d, current blood %d/%d。\n",
-			GvPlayerName(player->ID), placeIdToName(player->current),
-			LIFE_GAIN_REST, player->blood, GAME_START_HUNTER_LIFE_POINTS);
+		
 	}
 }
 
@@ -1278,8 +1259,6 @@ void GvVampireProc(GameView gv)
 		//Mateur, fly away
 		//6 rounds mature
 		if(gv->vamp.born >= 6){
-			printf("    %-10s became a mateur vamp in %10s, lose mark：%d\n", "Vampire",
-				placeIdToName(gv->vamp.bornCity), SCORE_LOSS_VAMPIRE_MATURES);
 			//Remove Vampire
 			GvRemoveVampire(gv);	
 			GvChangeScore(gv, -SCORE_LOSS_VAMPIRE_MATURES);
@@ -1335,7 +1314,6 @@ void GvTrapProc(GameView gv)
 			if(ev[i].type == EncounterTrap){
 				--ev[i].value;
 				if(ev[i].value == 0){
-					printf("    A trap in %s lost its function because it was not maintained for a long time.\n", placeIdToName(ev[i].city));
 					EcInit(&ev[i]);
 				}
 			}
@@ -1355,9 +1333,9 @@ int GvGetTotalMoves(GameView gv, Player player) {
 	int round_num = GvGetRound(gv);
 	int i = 0;
 	while (i < round_num) {
-        if(gv->players[player].history[i] != NOWHERE){
-            num++;
-        }
+        	if(gv->players[player].history[i] != NOWHERE){
+            		num++;
+        	}
 		i++;
 	}
 
@@ -1371,9 +1349,9 @@ int GvGetTotalLocations(GameView gv, Player player) {
 	int i = 0;
 	int round_num = GvGetRound(gv);
 	while (i < round_num) {
-        if(gv->players[player].locHistory[i] != NOWHERE){
-            num++;
-        }
+		if(gv->players[player].locHistory[i] != NOWHERE){
+		    num++;
+		}
 		i++;
 	}
 
