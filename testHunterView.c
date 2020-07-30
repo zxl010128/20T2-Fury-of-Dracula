@@ -877,6 +877,7 @@ int main(void)
 		printf("Test passed!\n");
 	}
 
+	printf("Passed all tests!\n");
 	return EXIT_SUCCESS;
 
 }
