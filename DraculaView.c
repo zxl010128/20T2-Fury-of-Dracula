@@ -169,6 +169,10 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	// get current round
 	Round cur_round = DvGetRound(dv);
+	if (cur_round == 0) {
+		*numReturnedLocs = 0;
+		return NULL;	
+	}
 	// an array to store all can reachable locations
 	PlaceId canGoLocs[NUM_REAL_PLACES];
 	int count = 0;
@@ -249,6 +253,10 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 {
 	// get current round
 	Round cur_round = DvGetRound(dv);
+	if (cur_round == 0) {
+		*numReturnedLocs = 0;
+		return NULL;	
+	}
 	// an array to store all can reachable locations
 	PlaceId canGoLocs[NUM_REAL_PLACES];
 	int count = 0;
@@ -332,18 +340,25 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
                           int *numReturnedLocs)
 {
-	*numReturnedLocs = 0;
 	// get current round
 	Round cur_round = DvGetRound(dv);
 	// get current palce
-	PlaceId from = DvGetPlayerLocation(dv, PLAYER_DRACULA);
-	// check current player
-	if (GvGetPlayer(dv->gv) != PLAYER_LORD_GODALMING) {
+	PlaceId from = DvGetPlayerLocation(dv, player);
+	// player is hunters
+	int numLocs = 0;
+	PlaceId *locs = NULL;
+	if (player != PLAYER_DRACULA) {		 
+		// next round
 		cur_round++;	
+		locs = GvGetReachable(dv->gv, player, cur_round, from, &numLocs);
+	} else { // player is drac
+		locs = DvWhereCanIGo(dv, &numLocs);
 	}
-	int numLocs = -1;
-	PlaceId *locs = GvGetReachable(dv->gv, player, cur_round, from, &numLocs);
-	*numReturnedLocs = numLocs;	
+	if (numLocs == 0) {
+		*numReturnedLocs = 0;	
+	} else {
+		*numReturnedLocs = numLocs;	
+	}	
 	return locs;
 }
 
@@ -351,18 +366,26 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	*numReturnedLocs = 0;
 	// get current round
 	Round cur_round = DvGetRound(dv);
-	// get current palce
-	PlaceId from = DvGetPlayerLocation(dv, PLAYER_DRACULA);
-	// check current player
-	if (GvGetPlayer(dv->gv) != PLAYER_LORD_GODALMING) {
+	// get current palce 
+	PlaceId from = DvGetPlayerLocation(dv, player);
+	// player is hunters
+	int numLocs = 0;
+	PlaceId *locs = NULL;
+	if (player != PLAYER_DRACULA) {		 
+		// next round
 		cur_round++;	
+		locs = GvGetReachableByType(dv->gv, player, cur_round, from,
+											 road, rail, boat, &numLocs);
+	} else { // player is drac 
+		locs = DvWhereCanIGoByType(dv, road, boat, &numLocs);
 	}
-	int numLocs = -1;
-	PlaceId *locs = GvGetReachableByType(dv->gv, player, cur_round, from, road, rail, boat, &numLocs);
-	*numReturnedLocs = numLocs;	
+	if (numLocs == 0) {
+		*numReturnedLocs = 0;	
+	} else {
+		*numReturnedLocs = numLocs;	
+	}
 	return locs;
 }
 
@@ -392,7 +415,7 @@ int isCotainHIMove(PlaceId *moves, int numMoves)
 	int check = 0;
 	while (check < numMoves) {
 		if (moves[check] == HIDE) {
-        		return 1;			
+        	return 1;			
 		} 
 		check++;
 	}
