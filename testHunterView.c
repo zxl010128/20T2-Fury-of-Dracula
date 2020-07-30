@@ -683,7 +683,27 @@ int main(void)
 		HvFree(hv);
 		printf("Test passed!\n");
 	}
+
+	{///////////////////////////////////////////////////////////////////
 	
+		printf("Checking other player Mina Harker raod, rail and boat connections "
+		       "(Mina Harker, Round 1)\n");
+		
+		char *trail = "GLE.... SKL....";
+
+		Message messages[2] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanTheyGo(hv, PLAYER_MINA_HARKER, &numLocs);
+		
+		assert(numLocs == 0);			
+		assert(locs == NULL);
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
 	{///////////////////////////////////////////////////////////////////
 	
 		printf("Checking Galatz road connections "
@@ -787,6 +807,27 @@ int main(void)
 		HvFree(hv);
 		printf("Test passed!\n");	
 	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking other player Mina Harker raod connections "
+		       "(Mina Harker, Round 1)\n");
+		
+		char *trail = "GDU.... SBI....";
+
+		Message messages[2] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_MINA_HARKER,
+		                                       true, false, false, &numLocs);
+		
+		assert(numLocs == 0);			
+		assert(locs == NULL);
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
 	
 	{///////////////////////////////////////////////////////////////////
 	
@@ -830,7 +871,6 @@ int main(void)
 		assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
 		Round round = -1;
 		assert(HvGetLastKnownDraculaLocation(hv, &round) == STRASBOURG);
-		printf("%d\n", round);
 		assert(round == 4);
 
 		HvFree(hv);
