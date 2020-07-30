@@ -28,7 +28,6 @@
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 struct hunterView {
-	// TODO: ADD FIELDS HERE
     GameView gv;
 };
 
@@ -46,10 +45,10 @@ typedef struct QueueRep {
 
 typedef struct QueueRep *Queue;
 
-Queue newQueue(); 				// create new empty queue
+Queue newQueue(); 			// create new empty queue
 void dropQueue(Queue); 			// free memory used by queue
 void showQueue(Queue); 			// display 
-void QueueJoin(Queue,Item); 	// add item on queue
+void QueueJoin(Queue,Item); 		// add item on queue
 Item QueueLeave(Queue); 		// remove item from queue
 int QueueIsEmpty(Queue); 		// check for no items
 bool placeRealCheck(PlaceId pid);
@@ -59,7 +58,6 @@ bool placeRealCheck(PlaceId pid);
 
 HunterView HvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	HunterView new = malloc(sizeof(*new));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
