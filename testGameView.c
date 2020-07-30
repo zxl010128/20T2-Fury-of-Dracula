@@ -903,6 +903,7 @@ int main(void)
 		GvFree(gv);
 		printf("Test passed!\n");
 	}
+	
 	{///////////////////////////////////////////////////////////////////
 	
 		printf("Testing Dracula Teleport\n");
@@ -921,6 +922,7 @@ int main(void)
 		GvFree(gv);
 		printf("Test passed!\n");
 	}
+	
 	{///////////////////////////////////////////////////////////////////
 
 		printf("Testing doubleback\n");
@@ -944,7 +946,8 @@ int main(void)
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CASTLE_DRACULA);
 		assert(GvGetVampireLocation(gv) == NOWHERE);
 		printf("Test passed!\n");
-	}	
+	}
+	
 	{///////////////////////////////////////////////////////////////////
 
 		printf("Testing doubleback\n");
@@ -975,5 +978,6 @@ int main(void)
 		printf("Test passed!\n");
 	}
 	
+	printf("Passed all tests!\n");
 	return EXIT_SUCCESS;
 }
