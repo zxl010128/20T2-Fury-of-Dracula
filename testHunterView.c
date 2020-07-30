@@ -367,7 +367,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 
-		printf("Checking current player Dr Seward raod, rail and boat connections "
+		printf("Checking current player Dr Seward road, rail and boat connections "
 		       "(Dr Seward, Round 1)\n");
 
 		char *trail = "GLS.... SRO.... HGE.... MGE.... DST.V.. "
@@ -395,7 +395,7 @@ int main(void)
 	
 	{///////////////////////////////////////////////////////////////////
 	
-		printf("Checking current player PLAYER_VAN_HELSING raod, rail and boat connections "
+		printf("Checking current player PLAYER_VAN_HELSING road, rail and boat connections "
 		       "(Dr Seward, Round 0)\n");
 		
 		char *trail = "GLS.... SRO....";
@@ -415,7 +415,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	
-		printf("Checking current player Lord Godalming raod connections "
+		printf("Checking current player Lord Godalming road connections "
 		       "(Lord Godalming, Round 1)\n");
 		
 		char *trail = "GGA.... SRO.... HGE.... MGE.... DST.V.. ";
@@ -536,7 +536,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	
-		printf("Checking current player Dr Seward raod, rail and boat connections "
+		printf("Checking current player Dr Seward road, rail and boat connections "
 		       "(Dr Seward, Round 1)\n");
 		
 		char *trail = "GLO.... SRO.... HGE.... MGE.... DST.V.. "
@@ -564,7 +564,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	
-		printf("Checking current player Mina Harker raod, rail and boat connections "
+		printf("Checking current player Mina Harker road, rail and boat connections "
 		       "(Mina Harker, Round 1)\n");
 		
 		char *trail = "GLO.... SRO.... HGE.... MCN.... DST.V.. "
@@ -601,7 +601,7 @@ int main(void)
 	
 	{///////////////////////////////////////////////////////////////////
 	
-		printf("Checking other player Dr Seward raod, rail and boat connections "
+		printf("Checking other player Dr Seward road, rail and boat connections "
 		       "(Dr Seward, Round 1)\n");
 		
 		char *trail = "GGA.... SRO.... HAL....";
@@ -627,7 +627,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	
-		printf("Checking other player Mina Harker raod, rail and boat connections "
+		printf("Checking other player Mina Harker road, rail and boat connections "
 		       "(Mina Harker, Round 8)\n");
 		
 		char *trail =
@@ -664,7 +664,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	
-		printf("Checking other player Mina Harker raod, rail and boat connections "
+		printf("Checking other player Mina Harker road, rail and boat connections "
 		       "(Mina Harker, Round 8)\n");
 		
 		char *trail =
@@ -686,7 +686,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	
-		printf("Checking other player Mina Harker raod, rail and boat connections "
+		printf("Checking other player Mina Harker road, rail and boat connections "
 		       "(Mina Harker, Round 1)\n");
 		
 		char *trail = "GLE.... SKL....";
@@ -810,7 +810,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	
-		printf("Checking other player Mina Harker raod connections "
+		printf("Checking other player Mina Harker road connections "
 		       "(Mina Harker, Round 1)\n");
 		
 		char *trail = "GDU.... SBI....";
