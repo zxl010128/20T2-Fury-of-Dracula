@@ -326,8 +326,16 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 	// if the given player is hunter
 	if (player != PLAYER_DRACULA) {
 		
-		// get the next round
+		Player currplayer = HvGetPlayer(hv);
 		Round round = HvGetRound(hv);
+
+		// unknown place of the hunter
+		if (round == 0 && currplayer <= player) {
+			*numReturnedLocs = 0;
+			return NULL;
+		}
+
+		// get the next round
 		if (HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
 			round++;
 		}
@@ -346,7 +354,14 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 
 	// if the given player is Darcula
 	} else {
-		
+
+		Round round = HvGetRound(hv);
+		// unknown place of the Dracula
+		if (round == 0) {
+			*numReturnedLocs = 0;
+			return NULL;
+		}
+
 		// if Darcula's current location is unknown
 		PlaceId check = HvGetPlayerLocation(hv, player);
 		if (check == CITY_UNKNOWN || check == SEA_UNKNOWN) {
@@ -354,7 +369,7 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 			return NULL;
 
 		} else {
-			
+
 			// get all the reachableLocations
 			Round round = HvGetRound(hv);
 			*numReturnedLocs = 0;
@@ -378,8 +393,16 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 	// if the given player is hunter
 	if (player != PLAYER_DRACULA) {
 		
-		// get the next round
+		Player currplayer = HvGetPlayer(hv);
 		Round round = HvGetRound(hv);
+
+		// unknown place of the hunter
+		if (round == 0 && currplayer <= player) {
+			*numReturnedLocs = 0;
+			return NULL;
+		}
+
+		// get the next round
 		if (HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
 			round++;
 		}
@@ -400,6 +423,13 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 	// if the given player is Darcula
 	} else {
 		
+		Round round = HvGetRound(hv);
+		// unknown place of the Dracula
+		if (round == 0) {
+			*numReturnedLocs = 0;
+			return NULL;
+		}
+
 		// if Darcula's current location is unknown
 		PlaceId check = HvGetPlayerLocation(hv, player);
 		if (check == CITY_UNKNOWN || check == SEA_UNKNOWN) {
