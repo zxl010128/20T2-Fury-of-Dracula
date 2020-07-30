@@ -435,7 +435,7 @@ int main(void)
 		GameView gv = GvNew(trail, messages);
 		
 		{
-			printf("\tChecking Rome raod, rail and boat connections "
+			printf("\tChecking Rome road, rail and boat connections "
 			       "(Dr Seward, Round 1)\n");
 			int numLocs = -1;
 			PlaceId *locs = GvGetReachable(gv, PLAYER_DR_SEWARD,
@@ -453,7 +453,7 @@ int main(void)
 		}
 		
 		{
-			printf("\tChecking Constanta raod, rail and boat connections "
+			printf("\tChecking Constanta road, rail and boat connections "
 			       "(Mina Harker, Round 8)\n");
 			int numLocs = -1;
 			PlaceId *locs = GvGetReachable(gv, PLAYER_MINA_HARKER,
@@ -473,7 +473,7 @@ int main(void)
 		}
 		
 		{
-			printf("\tChecking Constanta raod, rail and boat connections "
+			printf("\tChecking Constanta road, rail and boat connections "
 			       "(Dracula, Round 8)\n");
 			int numLocs = -1;
 			PlaceId *locs = GvGetReachable(gv, PLAYER_DRACULA,
@@ -600,7 +600,7 @@ int main(void)
 		}	
 		
 		{
-			printf("\tChecking Rome raod, rail and boat connections "
+			printf("\tChecking Rome road, rail and boat connections "
 			       "(Dr Seward, Round 1)\n");
 			int numLocs = -1;
 			PlaceId *locs = GvGetReachableByType(gv, PLAYER_DR_SEWARD,
@@ -619,7 +619,7 @@ int main(void)
 		}
 		
 		{
-			printf("\tChecking Constanta raod, rail and boat connections "
+			printf("\tChecking Constanta road, rail and boat connections "
 			       "(Mina Harker, Round 8)\n");
 			int numLocs = -1;
 			PlaceId *locs = GvGetReachableByType(gv, PLAYER_MINA_HARKER,
@@ -640,7 +640,7 @@ int main(void)
 		}
 		
 		{
-			printf("\tChecking Constanta raod, rail and boat connections "
+			printf("\tChecking Constanta road, rail and boat connections "
 			       "(Dracula, Round 8)\n");
 			int numLocs = -1;
 			PlaceId *locs = GvGetReachableByType(gv, PLAYER_DRACULA,
