@@ -768,7 +768,7 @@ int main(void)
 		assert(locs[3] == VARNA);
 		free(locs);
 
-		printf("Test passed!");
+		printf("Test passed!\n");
 		DvFree(dv);
     	}
 	
