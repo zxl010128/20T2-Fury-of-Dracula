@@ -364,171 +364,18 @@ int main(void)
 		HvFree(hv);
 		printf("Test passed!\n");
 	}
-	
-	{///////////////////////////////////////////////////////////////////
-	
-		printf("Checking Galatz road connections "
-		       "(Lord Godalming, Round 1)\n");
-		
-		char *trail = "GGA....";
-		Message messages[1] = {};
-		HunterView hv = HvNew(trail, messages);
-		
-		int numLocs = -1;
-		PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_LORD_GODALMING,
-		                                       true, false, false, &numLocs);
-		
-		assert(numLocs == 5);
-		sortPlaces(locs, numLocs);
-		assert(locs[0] == BUCHAREST);
-		assert(locs[1] == CASTLE_DRACULA);
-		assert(locs[2] == CONSTANTA);
-		assert(locs[3] == GALATZ);
-		assert(locs[4] == KLAUSENBURG);
-		free(locs);
-		
-		HvFree(hv);
-		printf("Test passed!\n");
-	}
-	
-	{///////////////////////////////////////////////////////////////////
-	
-		printf("Checking Paris rail connections "
-		       "(Lord Godalming, Round 1)\n");
-		
-		char *trail = "GPA....";
-		Message messages[1] = {};
-		HunterView hv = HvNew(trail, messages);
-		
-		int numLocs = -1;
-		PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_LORD_GODALMING,
-		                                       false, true, false, &numLocs);
-		
-		assert(numLocs == 5);
-		sortPlaces(locs, numLocs);
-		assert(locs[0] == BORDEAUX);
-		assert(locs[1] == BRUSSELS);
-		assert(locs[2] == LE_HAVRE);
-		assert(locs[3] == MARSEILLES);
-		assert(locs[4] == PARIS);
-		free(locs);
-		
-		HvFree(hv);
-		printf("Test passed!\n");
-	}
-	
-	{///////////////////////////////////////////////////////////////////
-	
-		printf("Checking Adriatic Sea boat connections "
-		       "(Lord Godalming, Round 1)\n");
-		
-		char *trail = "GAS....";
-		Message messages[1] = {};
-		HunterView hv = HvNew(trail, messages);
-		
-		int numLocs = -1;
-		PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_LORD_GODALMING,
-		                                       false, false, true, &numLocs);
-		
-		assert(numLocs == 4);
-		sortPlaces(locs, numLocs);
-		assert(locs[0] == ADRIATIC_SEA);
-		assert(locs[1] == BARI);
-		assert(locs[2] == IONIAN_SEA);
-		assert(locs[3] == VENICE);
-		free(locs);
-		
-		HvFree(hv);
-		printf("Test passed!\n");
-	}
-	
-	{///////////////////////////////////////////////////////////////////
-	
-		printf("Checking Szeged road connections "
-		       "(Dracula, Round 1)\n");
-		
-		char *trail =
-			"GSZ.... SGE.... HGE.... MGE.... DSZ.V..";
-		
-		Message messages[5] = {};
-		HunterView hv = HvNew(trail, messages);
-		
-		int numLocs = -1;
-		PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_DRACULA,
-		                                       true, false, false, &numLocs);
-		assert(numLocs == 5);
-		sortPlaces(locs, numLocs);
-		assert(locs[0] == BELGRADE);
-		assert(locs[1] == BUDAPEST);
-		assert(locs[2] == KLAUSENBURG);
-		assert(locs[3] == SZEGED);
-		assert(locs[4] == ZAGREB);
-		free(locs);
-		
-		HvFree(hv);
-		printf("Test passed!\n");	
-	}
-	
-	{///////////////////////////////////////////////////////////////////
-	
-		printf("Testing Dracula's last known location when there is no known location\n");
-		
-		char *trail =
-			"GGE.... SGE.... HVI.... MGE.... DC?.V.. "
-			"GGE.... SGE.... HVI.... MGE.... DC?T... "
-			"GGE.... SGE.... HVI.... MGE.... DC?T... "
-			"GGE.... SGE.... HVI.... MGE.... DC?T... "
-			"GGE.... SGE.... HVI.... MGE.... DC?T... ";
-	
-		Message messages[25] = {};
-		HunterView hv = HvNew(trail, messages);
-		
-		assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
-		Round round = -1;
-		assert(HvGetLastKnownDraculaLocation(hv, &round) == NOWHERE);
-		assert(round == 0);
-
-		HvFree(hv);
-		printf("Test passed!\n");
-	}
 
 	{///////////////////////////////////////////////////////////////////
-	
-		printf("Testing Dracula's last known location case 2\n");
-		
-		char *trail =
-			"GLS.... SGE.... HGE.... MGE.... DST.V.. "
-			"GCA.... SGE.... HGE.... MGE.... DC?T... "
-			"GGR.... SGE.... HGE.... MGE.... DC?T... "
-			"GAL.... SGE.... HGE.... MGE.... DD3T... "
-			"GSR.... SGE.... HGE.... MGE.... DHIT... "
-			"GSN.... SGE.... HGE.... MGE.... DC?T... "
-			"GMA.... SSTTTV.";
-	
-		Message messages[32] = {};
-		HunterView hv = HvNew(trail, messages);
-		
-		assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
-		Round round = -1;
-		assert(HvGetLastKnownDraculaLocation(hv, &round) == STRASBOURG);
-		printf("%d\n", round);
-		assert(round == 4);
 
-		HvFree(hv);
-		printf("Test passed!\n");
-	}
-
-	{///////////////////////////////////////////////////////////////////
-	
 		printf("Checking current player Dr Seward raod, rail and boat connections "
 		       "(Dr Seward, Round 1)\n");
-		
+
 		char *trail = "GLS.... SRO.... HGE.... MGE.... DST.V.. "
 					  "GCA....";
 
 		Message messages[6] = {};
 		HunterView hv = HvNew(trail, messages);
-		
+
 		int numLocs = -1;
 		PlaceId *locs = HvWhereCanIGo(hv, &numLocs);
 
@@ -541,7 +388,7 @@ int main(void)
 		assert(locs[4] == ROME);
 		assert(locs[5] == TYRRHENIAN_SEA);			
 		free(locs);
-		
+
 		HvFree(hv);
 		printf("Test passed!\n");
 	}
@@ -833,6 +680,159 @@ int main(void)
 		assert(numLocs == 0);			
 		assert(locs == NULL);
 		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+	
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking Galatz road connections "
+		       "(Lord Godalming, Round 1)\n");
+		
+		char *trail = "GGA....";
+		Message messages[1] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_LORD_GODALMING,
+		                                       true, false, false, &numLocs);
+		
+		assert(numLocs == 5);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BUCHAREST);
+		assert(locs[1] == CASTLE_DRACULA);
+		assert(locs[2] == CONSTANTA);
+		assert(locs[3] == GALATZ);
+		assert(locs[4] == KLAUSENBURG);
+		free(locs);
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+	
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking Paris rail connections "
+		       "(Lord Godalming, Round 1)\n");
+		
+		char *trail = "GPA....";
+		Message messages[1] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_LORD_GODALMING,
+		                                       false, true, false, &numLocs);
+		
+		assert(numLocs == 5);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BORDEAUX);
+		assert(locs[1] == BRUSSELS);
+		assert(locs[2] == LE_HAVRE);
+		assert(locs[3] == MARSEILLES);
+		assert(locs[4] == PARIS);
+		free(locs);
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+	
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking Adriatic Sea boat connections "
+		       "(Lord Godalming, Round 1)\n");
+		
+		char *trail = "GAS....";
+		Message messages[1] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_LORD_GODALMING,
+		                                       false, false, true, &numLocs);
+		
+		assert(numLocs == 4);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == ADRIATIC_SEA);
+		assert(locs[1] == BARI);
+		assert(locs[2] == IONIAN_SEA);
+		assert(locs[3] == VENICE);
+		free(locs);
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+	
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Checking Szeged road connections "
+		       "(Dracula, Round 1)\n");
+		
+		char *trail =
+			"GSZ.... SGE.... HGE.... MGE.... DSZ.V..";
+		
+		Message messages[5] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_DRACULA,
+		                                       true, false, false, &numLocs);
+		assert(numLocs == 5);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BELGRADE);
+		assert(locs[1] == BUDAPEST);
+		assert(locs[2] == KLAUSENBURG);
+		assert(locs[3] == SZEGED);
+		assert(locs[4] == ZAGREB);
+		free(locs);
+		
+		HvFree(hv);
+		printf("Test passed!\n");	
+	}
+	
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Testing Dracula's last known location when there is no known location\n");
+		
+		char *trail =
+			"GGE.... SGE.... HVI.... MGE.... DC?.V.. "
+			"GGE.... SGE.... HVI.... MGE.... DC?T... "
+			"GGE.... SGE.... HVI.... MGE.... DC?T... "
+			"GGE.... SGE.... HVI.... MGE.... DC?T... "
+			"GGE.... SGE.... HVI.... MGE.... DC?T... ";
+	
+		Message messages[25] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
+		Round round = -1;
+		assert(HvGetLastKnownDraculaLocation(hv, &round) == NOWHERE);
+		assert(round == 0);
+
+		HvFree(hv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Testing Dracula's last known location case 2\n");
+		
+		char *trail =
+			"GLS.... SGE.... HGE.... MGE.... DST.V.. "
+			"GCA.... SGE.... HGE.... MGE.... DC?T... "
+			"GGR.... SGE.... HGE.... MGE.... DC?T... "
+			"GAL.... SGE.... HGE.... MGE.... DD3T... "
+			"GSR.... SGE.... HGE.... MGE.... DHIT... "
+			"GSN.... SGE.... HGE.... MGE.... DC?T... "
+			"GMA.... SSTTTV.";
+	
+		Message messages[32] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		assert(HvGetPlayerLocation(hv, PLAYER_DRACULA) == CITY_UNKNOWN);
+		Round round = -1;
+		assert(HvGetLastKnownDraculaLocation(hv, &round) == STRASBOURG);
+		printf("%d\n", round);
+		assert(round == 4);
+
 		HvFree(hv);
 		printf("Test passed!\n");
 	}
