@@ -67,7 +67,6 @@ HunterView HvNew(char *pastPlays, Message messages[])
 	}
     
 	new->gv = GvNew(pastPlays, messages);
-
 	return new;
 }
 
@@ -80,31 +79,37 @@ void HvFree(HunterView hv)
 ////////////////////////////////////////////////////////////////////////
 // Game State Information
 
+// Get current round
 Round HvGetRound(HunterView hv)
 {
 	return GvGetRound(hv->gv);
 }
 
+// Get current player
 Player HvGetPlayer(HunterView hv)
 {
 	return GvGetPlayer(hv->gv);
 }
 
+// Get current score
 int HvGetScore(HunterView hv)
 {
 	return GvGetScore(hv->gv);
 }
 
+// Get current health
 int HvGetHealth(HunterView hv, Player player)
 {
 	return GvGetHealth(hv->gv, player);
 }
 
+// Get current player location
 PlaceId HvGetPlayerLocation(HunterView hv, Player player)
 {
 	return GvGetPlayerLocation(hv->gv, player);
 }
 
+// Get current vampire location
 PlaceId HvGetVampireLocation(HunterView hv)
 {
 	return GvGetVampireLocation(hv->gv);
@@ -113,10 +118,13 @@ PlaceId HvGetVampireLocation(HunterView hv)
 ////////////////////////////////////////////////////////////////////////
 // Utility Functions
 
+// Gets  Dracula's  last  known  real  location  as revealed
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
+	// get current round
 	Round current_round = GvGetRound(hv->gv);
 
+	// get All the location History
 	int history_count = 0;
 	bool canFree = false;
 	PlaceId *locations_his = GvGetLocationHistory(hv->gv, PLAYER_DRACULA, &history_count, &canFree);
@@ -125,6 +133,7 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 
 	PlaceId lastKnown;
 
+	// loop to find the first known city in the array
 	for (int i = 0; i < history_count; i++) {
 		if (placeRealCheck(locations_his[history_count - 1 - i]) == false) {
 			current_round--;
@@ -136,6 +145,7 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 		}
 	}
 
+	// all the city unknown
 	if (is_found == false) {
 		*round = 0;
 		return NOWHERE;
@@ -149,8 +159,10 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
+	// get player current place
 	PlaceId current = HvGetPlayerLocation(hv, hunter);
 	
+	// situation when current = dest
 	if (current == dest) {
 		PlaceId *path = malloc(sizeof(PlaceId));
 		path[0] = dest;
@@ -160,69 +172,86 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 	PlaceId temp_city;
 
-	int Path_length = 0;
-
+	// if visited, it will show 1 of this place ID
 	int visited[NUM_REAL_PLACES] = {0};
 
+	// this array will record the connected place ID
 	PlaceId last_position[NUM_REAL_PLACES] = {[0 ... (NUM_REAL_PLACES-1)] = -1};
 
-	Queue cityQ = newQueue();
-	QueueJoin(cityQ, current);
+	// Queue created
+	Queue queue_location = newQueue();
+	QueueJoin(queue_location, current);
 
-	int round[NUM_REAL_PLACES];
+	// this array will record the round number of the Place ID
+	Round round[NUM_REAL_PLACES];
 	
+	// Set the src round
 	round[current] = HvGetRound(hv);
 	
+	// check whether the dest is founded
 	bool is_Found = false;
 
-	while (!QueueIsEmpty(cityQ) && !is_Found) {
+	while (!QueueIsEmpty(queue_location) && !is_Found) {
 		
-		temp_city = QueueLeave(cityQ);
+		temp_city = QueueLeave(queue_location);
 
+		// if we have visited this city, we need to skip it
+		// there should be the situation the place connect more than once
 		if (visited[temp_city] == 1) {
 			continue;
 		}
 
+		// set visited of this city
 		visited[temp_city] = 1;
 
+		// get all the reachable locations
 		int num_locs = 0;
-
 		PlaceId *locs = GvGetReachable(hv->gv, hunter, round[temp_city], temp_city, &num_locs);
-	
-		int i;
-		for (i = 0; i < num_locs; i++) {
+
+		// join the reachable place to Queue
+		for (int i = 0; i < num_locs; i++) {
 			
+			// the place must be non-visted
 			if (!visited[locs[i]] && last_position[locs[i]] == -1) {
+				
 				last_position[locs[i]] = temp_city;
+				// if this location is the dest, break the loop
 				if (locs[i] == dest) {
 					is_Found = true;
 					break;
 				}
-				QueueJoin(cityQ, locs[i]);
 
-				int curr_round = round[temp_city];
-				round[locs[i]] = curr_round + 1;
+				// Join this place to the Queue
+				QueueJoin(queue_location, locs[i]);
+
+				// set this place round as temp_round + 1
+				round[locs[i]] = round[temp_city] + 1;
 			}
 
 		}
 
 	}
 
-	dropQueue(cityQ);
+	dropQueue(queue_location);
 
+	// situation when there is no dest in the map
 	if (is_Found == false) {
 		return NULL;
 	}
-
+	
+	// count the length of the path
+	int Path_length = 0;
 	for (PlaceId position = dest; position != current; position = last_position[position]) Path_length++;
 	
+	// allocate memory for the return array
 	PlaceId *ReturnedLocs = malloc(sizeof(PlaceId) * Path_length);
 
+	// form the path
 	int array_index = Path_length - 1;
 	ReturnedLocs[array_index] = dest;
 	array_index--;
 
-	int temp = last_position[dest];
+	PlaceId temp = last_position[dest];
 	while (array_index >= 0) {
 		ReturnedLocs[array_index] = temp;
 		temp = last_position[temp];
@@ -230,6 +259,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	}
 	
 	(*pathLength) = Path_length;
+
 	return ReturnedLocs;
 
 }
@@ -237,17 +267,22 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 ////////////////////////////////////////////////////////////////////////
 // Making a Move
 
+// Gets all the locations that the current hunter player can move to this round
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
 
 	Player player = HvGetPlayer(hv);
 	Round round = HvGetRound(hv);
+
+	// unknown place of the player
 	if (round == 0) {
 		*numReturnedLocs = 0;
 		return NULL;
 	}
 
-	PlaceId current = HvGetPlayerLocation(hv, player);	
+	// get all the reachableLocations
+	PlaceId current = HvGetPlayerLocation(hv, player);
+
 	*numReturnedLocs = 0;
 	PlaceId *reachableLocations = GvGetReachable(hv->gv, player, round, current, numReturnedLocs);
 
@@ -259,16 +294,20 @@ PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 	return reachableLocations;
 }
 
+// Gets all the locations that the current hunter player can move to this round, consider the rail and boat.
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)
 {
 	Player player = HvGetPlayer(hv);
 	Round round = HvGetRound(hv);
+
+	// unknown place of the player
 	if (round == 0) {
 		*numReturnedLocs = 0;
 		return NULL;
 	}
 
+	// get all the reachableLocations
 	PlaceId current = HvGetPlayerLocation(hv, player);
 
 	*numReturnedLocs = 0;
@@ -282,6 +321,7 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 	return reachableByType;
 }
 
+// Gets all the locations that the given player can move to in their next move
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
@@ -322,6 +362,7 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 	}
 }
 
+// Gets all the locations that the given player can move to in their next move, consider the rail and boat.
 PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
@@ -369,11 +410,14 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
+// check whether it is a Real Place
 bool placeRealCheck(PlaceId pid)
 {
 	return pid >= MIN_REAL_PLACE && pid <= MAX_REAL_PLACE;
 }
 
+////////////////////////////////////////////////////////////////////////
+// ADT Queue is below 
 
 // create new empty Queue
 Queue newQueue()
