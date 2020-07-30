@@ -465,7 +465,6 @@ void GvRunGame(GameView gv, char* pastPlays, Message messages[])
 			case 'D'://Hunter and Dracula encounter
 				//hunter loos blood
 				gv->players[id].blood -= LIFE_LOSS_DRACULA_ENCOUNTER;
-				GvPlayerName(id), LIFE_LOSS_DRACULA_ENCOUNTER, gv->players[id].blood);
 				GvOnHitHunter(gv, id);		//Hunter injured
 
 				//Dracula Hurts
