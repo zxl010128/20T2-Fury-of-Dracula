@@ -19,11 +19,13 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
+
 // add your own #includes here
 #define MAXIMUM_TRAP 3
 #define NOT_FIND    -100
 #define MAXIMUM_CITY 128	
-#define MOVE_SIZE    7		
+#define MOVE_SIZE    7	
+
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 typedef struct amateurVamp {
@@ -759,13 +761,14 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
 {	
-ConnList adjacent = MapGetConnections(gv->gameMap, from);
+	// using MapGetConnections fun to get adjacent places
+	ConnList adjacent = MapGetConnections(gv->gameMap, from);
 	PlaceId reachableLocs[NUM_REAL_PLACES];
 	// count is the sum number of reachable places by any transport type
 	int count = 0;
+	// add the from place in array
 	reachableLocs[count] = from;
 	count++;
-	*numReturnedLocs = 1;
 	// transportType is road and boat
 	ConnList cur = adjacent;
 	while (cur != NULL) {
@@ -910,14 +913,14 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               PlaceId from, bool road, bool rail,
                               bool boat, int *numReturnedLocs)
 {
-
+	// using MapGetConnections fun to get adjacent places
 	ConnList adjacent = MapGetConnections(gv->gameMap, from);
 	PlaceId reachableLocs[NUM_REAL_PLACES];
 	// count is the sum number of reachable places by any transport type
 	int count = 0;
+	// add from place in array
 	reachableLocs[count] = from;
 	count++;
-	*numReturnedLocs = 1;
 	// transportType is road
 	if (road) {
 		ConnList road_cur = adjacent;
