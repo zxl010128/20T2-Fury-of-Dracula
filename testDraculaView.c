@@ -719,7 +719,7 @@ int main(void)
 
 		printf("Test passed!\n");
 		DvFree(dv);
-    }
+    	}
 
 	{
 		printf("Test for DvWhereCanTheyGo 2\n");
@@ -745,9 +745,9 @@ int main(void)
 
 		printf("Test passed!\n");
 		DvFree(dv);
-    }
+    	}
 
-    {///////////////////////////////////////////////////////////////////   
+    	{///////////////////////////////////////////////////////////////////   
 		printf("Test for DvWhereCanTheyGoByType 1\n");
 
 		char *trail =
@@ -770,9 +770,9 @@ int main(void)
 
 		printf("Test passed!");
 		DvFree(dv);
-    }
-
-    {  
+    	}
+	
+	{  
 		printf("Test for DvWhereCanTheyGoByType 2\n");
 		
 		char *trail =
@@ -823,7 +823,7 @@ int main(void)
 
 		printf("Test passed!\n");
 		DvFree(dv);
-    }
+    	}
 
 	{
 		printf("Test for DvWhereCanTheyGoByType 4\n");
@@ -849,7 +849,8 @@ int main(void)
 
 		printf("Test passed!\n");
 		DvFree(dv);
-    }
-
+   	}
+	
+	printf("Passed all tests!\n");
 	return EXIT_SUCCESS;
 }
