@@ -602,25 +602,31 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 ////////////////////////////////////////////////////////////////////////
 // Game History
 
+//Gets the complete move history in chronological order.
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
-    	int moveTimes = GvGetTotalMoves(gv, player);
+	// get the total move numbers
+	int moveTimes = GvGetTotalMoves(gv, player);
+
+	// situation when there is no move
+	if (moveTimes == 0){
+    	*numReturnedMoves = 0;
+    	(*canFree) = false;
+    	return NULL;
+	}
+	
+	// allocate memory for the return array
+	int move_count = 0;
+	PlaceId *moveHistory = malloc(sizeof(PlaceId) * (moveTimes + 1));
+
+	// get the moveHistory
+	for (int i = 0; i < moveTimes; i++) {
+		moveHistory[i] = gv->players[player].history[moveTimes - i - 1];
+		move_count++;
+	}
     
-    	if (moveTimes == 0){
-        	*numReturnedMoves = 0;
-        	(*canFree) = false;
-        	return NULL;
-    	}
-    
-    	int move_count = 0;
-    	PlaceId *moveHistory = malloc(sizeof(PlaceId) * (moveTimes + 1));
-    
-    	for (int i = 0; i < moveTimes; i++) {
-        	moveHistory[i] = gv->players[player].history[moveTimes - i - 1];
-        	move_count++;
-    	}
-    
+	// add the last move History
 	moveHistory[moveTimes] = gv->players[player].move;
 	move_count++;
 	(*numReturnedMoves) = move_count;
@@ -629,102 +635,120 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	return moveHistory;
 }
 
+// Gets the given player's last `numMoves` moves in chronological order
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
-      
-    	int moveTimes = GvGetTotalMoves(gv, player);
-    
-    	if (moveTimes == 0 || numMoves == 0){
-        	*numReturnedMoves = 0;
-        	(*canFree) = false;
-        	return NULL;
-    	}
-    
-    	int move_count = 0;
-    	PlaceId *moveHistory = malloc(sizeof(PlaceId) * numMoves);
-    
-    	if (numMoves > moveTimes) {
-        	moveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, canFree);
-    
-    	} else {
-        	for (int i = 0; i < numMoves - 1; i++) {
-			moveHistory[i] = gv->players[player].history[numMoves - i - 2];
-			move_count++;
-        	}
-        
+
+   	// get the total move numbers   
+	int moveTimes = GvGetTotalMoves(gv, player);
+
+	// situation when there is no move or require 0 move
+	if (moveTimes == 0 || numMoves == 0){
+		*numReturnedMoves = 0;
+		(*canFree) = false;
+		return NULL;
+	}
+
+	// allocate memory for the return array
+	int move_count = 0;
+	PlaceId *moveHistory = malloc(sizeof(PlaceId) * numMoves);
+
+	// when numMoves > moveTimes, the result will totally be the same with GvGetMoveHistory
+	if (numMoves > moveTimes) {
+		moveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, canFree);
+
+	} else {
+		// get the last n moveHistory
+		for (int i = 0; i < numMoves - 1; i++) {
+		moveHistory[i] = gv->players[player].history[numMoves - i - 2];
+		move_count++;
+		}
+		
+		// add the last move History
 		moveHistory[move_count] = gv->players[player].move;
 		move_count++;
 		(*numReturnedMoves) = move_count;
 		(*canFree) = true;
-    	}
+	}
 
-    	return moveHistory;
+	return moveHistory;
 
 }
 
+// Gets the given player's locations history in chronological order
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
                               int *numReturnedLocs, bool *canFree)
 {
-    
-    	int locCount = GvGetTotalLocations(gv, player);
-    
-    	if (locCount == 0){
-        	*numReturnedLocs = 0;
-        	(*canFree) = false;
-        	return NULL;
-    	}
-    
-    	int loccount = 0;
-   	PlaceId *locationHistory = malloc(sizeof(PlaceId) * (locCount + 1));
-    
-    	if (player == PLAYER_DRACULA) {
+    // get total location number
+	int locCount = GvGetTotalLocations(gv, player);
 
+	// situation when there is no location
+	if (locCount == 0){
+		*numReturnedLocs = 0;
+		(*canFree) = false;
+		return NULL;
+	}
+
+	// allocate memory for the return array
+	int loccount = 0;
+	PlaceId *locationHistory = malloc(sizeof(PlaceId) * (locCount + 1));
+
+	if (player == PLAYER_DRACULA) {
+
+		// get the locsHistory for Dracula
 		for (int i = 0; i < locCount; i++) {
 			locationHistory[i] = gv->players[player].locHistory[locCount - i - 1];
 			loccount++;
 		}
-
+		// add the last location History
 		locationHistory[locCount] = gv->players[player].current;
 		(*numReturnedLocs) = loccount;
 		(*canFree) = true;
 
-    	} else {
-        	locationHistory = GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
-    	}
+	} else {
+		// If the given player is a hunter, this function should behave exactly the same as GvGetMoveHistory
+		locationHistory = GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
+	}
 
-   	return locationHistory;
+	return locationHistory;
 
 }
 
+// Gets the given player's last `numLocs` locations in chronological order
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
                             int *numReturnedLocs, bool *canFree)
 {
+    // get total location number
 	int locCount = GvGetTotalLocations(gv, player);
 
+	// situation when there is no location or require 0 location
 	if (locCount == 0 || numLocs == 0){
 		*numReturnedLocs = 0;
 		(*canFree) = false;
 		return NULL;
 	}
 	
+	// allocate memory for the return array
 	PlaceId *locationHistory = malloc(sizeof(PlaceId) * numLocs);
 	int loccount = 0;
 
 	if (numLocs > locCount) {
+		// when numLocs > locCount, the result will totally be the same with GvGetLocationHistory
 		locationHistory = GvGetLocationHistory(gv, player, numReturnedLocs, canFree);
 
 	} else {
+		// get the locsHistory
 		for (int i = 0; i < numLocs - 1; i++) {
-		    	locationHistory[i] = gv->players[player].locHistory[numLocs - i - 1];
-		    	loccount++;
+			locationHistory[i] = gv->players[player].locHistory[numLocs - i - 1];
+			loccount++;
 		}
-
+		// add the last location History
 		locationHistory[loccount] = gv->players[player].current;
 		loccount++;
 		(*numReturnedLocs) = loccount;
 		(*canFree) = true;
-	    }
+	}
 
 	return locationHistory;
 }
