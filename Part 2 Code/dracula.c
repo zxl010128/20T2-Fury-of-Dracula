@@ -13,8 +13,30 @@
 #include "DraculaView.h"
 #include "Game.h"
 
+#include "Places.h"
+
+
 void decideDraculaMove(DraculaView dv)
-{
-	// TODO: Replace this with something better!
-	registerBestPlay("CD", "Mwahahahaha");
+{	
+	Round cur_round = DvGetRound(dv);
+	
+	PlaceId within_20_round[21] = {GALWAY, ATLANTIC_OCEAN, IRISH_SEA, DUBLIN, 
+	 DOUBLE_BACK_4, HIDE, TELEPORT, GALATZ, CONSTANTA, VARNA, BLACK_SEA, 
+	 IONIAN_SEA, TYRRHENIAN_SEA, CAGLIARI, MEDITERRANEAN_SEA, ATLANTIC_OCEAN, 
+	 GALWAY, DUBLIN, DOUBLE_BACK_2, HIDE, TELEPORT};
+	
+	PlaceId play_with_you[12] = {GALATZ, CONSTANTA, BLACK_SEA, IONIAN_SEA, 
+	 TYRRHENIAN_SEA, MEDITERRANEAN_SEA, ADRIATIC_SEA, GALWAY, DUBLIN, DOUBLE_BACK_2,
+	 HIDE, TELEPORT};
+
+	if (cur_round < 21) {
+		PlaceId next_move = within_20_round[cur_round];
+		char *xx = placeIdToAbbrev(next_move);
+		registerBestPlay(xx, "Mwahahahaha");
+	} else {
+		cur_round = (cur_round - 21) % 12;
+		PlaceId next_move = play_with_you[cur_round];
+		char *xx = placeIdToAbbrev(next_move);
+		registerBestPlay(xx, "Mwahahahaha");
+	}
 }
