@@ -190,7 +190,7 @@ static Turn playToTurn(char *play) {
 		if (play[5] == 'V') turn.actions[turn.numActions++] = VAMPIRE_MATURED;
 		if (play[5] == 'M') turn.actions[turn.numActions++] = TRAP_MALFUNCTIONED;
 		if (play[4] == 'V') turn.actions[turn.numActions++] = PLACED_VAMPIRE;
-		if (play[3] == 'T') turn.actions[turn.numActions++] = PLACED_TRAP
+		if (play[3] == 'T') turn.actions[turn.numActions++] = PLACED_TRAP;
 	} else {
 		for (int i = 3; i < 7; i++) {
 			switch (play[i]) {
