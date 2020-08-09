@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////
 // COMP2521 20T2 ... the Fury of Dracula
-// dracula.c: your "Fury of Dracula" Dracula AI
+// hunter.c: your "Fury of Dracula" hunter AI.
 //
 // 2014-07-01	v1.0	Team Dracula <cs2521@cse.unsw.edu.au>
 // 2017-12-01	v1.1	Team Dracula <cs2521@cse.unsw.edu.au>
@@ -9,96 +9,118 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
-#include "dracula.h"
-#include "DraculaView.h"
 #include "Game.h"
+#include "hunter.h"
+#include "HunterView.h"
 
 #include "Places.h"
 #include "utils.h"
 
-#define HUNTER_NUMBER 4
+void decideHunterMove(HunterView hv)
+{
 
-void decideDraculaMove(DraculaView dv)
-{	
-	Round cur_round = DvGetRound(dv);
-
-	PlaceId loopingggg[16] = {KLAUSENBURG, GALATZ, DOUBLE_BACK_3, 
-		HIDE, TELEPORT, TELEPORT, CASTLE_DRACULA, GALATZ, BUCHAREST, SOFIA, 
-		VALONA, IONIAN_SEA, ATHENS, DOUBLE_BACK_1, HIDE, TELEPORT};
-
-	PlaceId loopingg[9] = {GALATZ, BUCHAREST, SOFIA, 
-		VALONA, IONIAN_SEA, ATHENS, DOUBLE_BACK_1, HIDE, TELEPORT};
-
-
-	// case 1
+	// some current info
+	Round cur_round = HvGetRound(hv);
+	Player cur_player = HvGetPlayer(hv);
+	PlaceId cur_place = HvGetPlayerLocation(hv, cur_player);
+	int hp = HvGetHealth(hv, cur_player);
 	if (cur_round == 0) {
-		char *xx = placeIdToAbbrev(CASTLE_DRACULA);
-		registerBestPlay(xx, "A BA A BA!");
-	}
-	if (cur_round > 0 && cur_round <= 16) {
-		int i = cur_round - 1;
-		PlaceId next_move = loopingggg[i];
-		char *xx = placeIdToAbbrev(next_move);
-		registerBestPlay(xx, "A BA A BA!");
-	} 
-	if (cur_round > 0 && cur_round > 16) {
-		int i = (cur_round - 17) % 9;
-		PlaceId next_move = loopingg[i];
-		char *xx = placeIdToAbbrev(next_move);
-		registerBestPlay(xx, "A BA A BA!");
-	}
-
-/*
-	if (cur_round == 0) {
-		registerBestPlay("HA", "A BA A BA!");
-	}
-	if (cur_round > 0) {
-		int numLocs = 0;
-		PlaceId *moves = DvGetValidMoves(dv, &numLocs);
-		int numVaild = 0;
-		PlaceId vaildMoves[MAX_REAL_PLACE];
-		for (int i = 0; i < numLocs; i++) {
-			vaildMoves[numVaild] = moves[i];
-			numVaild++;
-		}
-		
-		int numLocs_hunters = 0;
-		int numHazardLocs = 0;
-		PlaceId hazard_palces[MAX_REAL_PLACE];
-		PlaceId *locs = DvWhereCanTheyGo(dv, PLAYER_LORD_GODALMING, &numLocs_hunters);
-		for (int j = 0; j < numLocs_hunters; j++) {
-			hazard_palces[numHazardLocs] = locs[j];
-			numHazardLocs++;
-		}
-		locs = DvWhereCanTheyGo(dv, PLAYER_DR_SEWARD, &numLocs_hunters);
-		for (int j = 0; j < numLocs_hunters; j++) {
-			hazard_palces[numHazardLocs] = locs[j];
-			numHazardLocs++;
-		}				
-		locs = DvWhereCanTheyGo(dv, PLAYER_VAN_HELSING, &numLocs_hunters);
-		for (int j = 0; j < numLocs_hunters; j++) {
-			hazard_palces[numHazardLocs] = locs[j];
-			numHazardLocs++;
-		}
-		locs = DvWhereCanTheyGo(dv, PLAYER_MINA_HARKER, &numLocs_hunters);
-		for (int j = 0; j < numLocs_hunters; j++) {
-			hazard_palces[numHazardLocs] = locs[j];
-			numHazardLocs++;
-		}		
-		
-		for (int n = 0; n < numHazardLocs; n++) {
-			if (placesContains(vaildMoves, numVaild, hazard_palces[n])) {
-				placesDelete(vaildMoves, numVaild, hazard_palces[n]);				
-			}
-		}
-		
-		if (numVaild == 0) {
-			registerBestPlay("TP", "A BA A BA!");		
+		// hunters' born places
+		if (cur_player == PLAYER_LORD_GODALMING) {
+			registerBestPlay("GW", "GIAO GIAO!");	
+		} else if (cur_player == PLAYER_DR_SEWARD) {
+			registerBestPlay("CN", "GIAO GIAO!");					
+		} else if (cur_player == PLAYER_VAN_HELSING) {
+			registerBestPlay("MA", "GIAO GIAO!");	
 		} else {
-			PlaceId next_move = vaildMoves[(cur_round - 1) % numVaild];
-			char *xx = placeIdToAbbrev(next_move);
-			registerBestPlay(xx, "A BA A BA!");	
+			registerBestPlay("FR", "GIAO GIAO!");	
 		}
-	}   
-*/
+	} else {
+		// search the last plays
+		int drac_round = 0;
+		PlaceId drac_find = HvGetLastKnownDraculaLocation(hv, &drac_round);
+		int diff_round = cur_round - drac_round;
+		if (hp < 5) {			
+			// if hunter hp is less than 5
+			// stay here
+			char *xx = placeIdToAbbrev(cur_place);
+			registerBestPlay(xx, "HP+++++++");
+		} else if (cur_round > 6 && drac_find == NOWHERE) {
+			// if current round biger than 6
+			// hunters can 'research' to find drac last known city
+			char *xx = placeIdToAbbrev(cur_place);
+			registerBestPlay(xx, "Research!");		
+		} else if (diff_round > 6 && drac_find != NOWHERE) {
+			// if diff is biger than 6
+			// hunters neend 'research' a new drac last known city
+			char *xx = placeIdToAbbrev(cur_place);
+			registerBestPlay(xx, "Research!");
+		} else if (drac_find != NOWHERE && drac_find != cur_place) {
+			// if find drac's trail is known 
+			// find the shorest path to this place
+			int length = 0;
+			PlaceId *path = HvGetShortestPathTo(hv, cur_player, drac_find, &length);
+			PlaceId next_move = path[0];
+			char *xx = placeIdToAbbrev(next_move);
+			registerBestPlay(xx, "I'll catch you!");
+		} else if (drac_find == cur_place && diff_round == 1) {
+			// if drac find is same as current city and diff is 1
+			// i.e. current hunter and drac in same city
+			char *xx = placeIdToAbbrev(cur_place);
+			registerBestPlay(xx, "Fight!");		
+		} else if (drac_find == cur_place && diff_round < 3 && diff_round > 1)  {
+			// if arrive at drac lase known city
+			// diff is between 1 and 3
+			// search road and boat
+			int numcanGo = 0; 		
+			PlaceId *canGo = HvWhereCanIGoByType(hv, true, false, true, &numcanGo);
+			// remove the current places 
+			if (placesContains(canGo, numcanGo, cur_place)) {
+				placesDelete(canGo, numcanGo, cur_place);				
+			}
+			// random pick one move
+			PlaceId next_move = canGo[(cur_round - 1) % numcanGo];
+			char *xx = placeIdToAbbrev(next_move);
+			registerBestPlay(xx, "Searching...(mode 1)");		
+		} else if (drac_find == cur_place && diff_round >= 3) {
+			// if arrive at drac lase known city
+			// diff is biger than 3
+			// search road and boat and rail
+			// an array contaion all city have rail
+			PlaceId rail_cities[44] = {EDINBURGH, MANCHESTER, LIVERPOOL, LONDON, SWANSEA,
+				LISBON, MADRID, ALICANTE, SANTANDER, SARAGOSSA, BARCELONA, BORDEAUX,
+				LE_HAVRE, PARIS, MARSEILLES, BRUSSELS, COLOGNE, FRANKFURT, STRASBOURG,
+				ZURICH, GENEVA, MILAN, GENOA, FLORENCE, ROME, NAPLES, BARI, VARNA,
+				LEIPZIG, BERLIN, HAMBURG, NUREMBURG, MUNICH, PRAGUE, VIENNA, VENICE,
+				BUDAPEST, SZEGED, BUCHAREST, GALATZ, CONSTANTA, BELGRADE, SOFIA, SALONICA
+			};			
+			int numcanGo = 0;
+			PlaceId *canGo = NULL;
+			if (placesContains(rail_cities, 44, cur_place)) {
+				canGo = HvWhereCanIGoByType(hv, false, true, true, &numcanGo);
+			} else {
+				canGo = HvWhereCanIGoByType(hv, true, true, true, &numcanGo);
+			}		
+			// remove the current places 
+			if (placesContains(canGo, numcanGo, cur_place)) {
+				placesDelete(canGo, numcanGo, cur_place);				
+			}
+			// random pick one move		
+			PlaceId next_move = canGo[(cur_round - 1) % numcanGo];
+			char *xx = placeIdToAbbrev(next_move);
+			registerBestPlay(xx, "Searching...(mode 2)");									
+		} else {				
+			// random move
+			int numcanGo = 0; 
+			PlaceId *canGo = HvWhereCanIGo(hv, &numcanGo);
+			// remove the current places 
+			if (placesContains(canGo, numcanGo, cur_place)) {
+				placesDelete(canGo, numcanGo, cur_place);				
+			}
+			// random pick one move				
+			PlaceId next_move = canGo[(cur_round - 1) % numcanGo];
+			char *xx = placeIdToAbbrev(next_move);
+			registerBestPlay(xx, "Random move");			
+		}
+	}
 }
