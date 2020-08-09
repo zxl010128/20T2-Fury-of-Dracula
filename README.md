@@ -33,16 +33,16 @@
 - [x] finished all GameView.c and TestGameView.c
 - [x] finished all HunterView.c and TestHunterView.c
 - [x] finished all DraculaView.c and TestDraculaView.c
-- [ ] finish the Hunt AI
-- [ ] finish the Dracula AI
+- [x] finished the Hunt AI
+- [x] finished the Dracula AI
 
 #### **Due: 23:59 on Fri 31 July**
 - [x] submitted 3 views code
 - [x] submitted 3 views test
   
 #### **Due: 23:59 on Sun 9 August**
-- [ ] submit the Hunt AI
-- [ ] submit the Dracula AI
+- [x] submitted the Hunt AI
+- [x] submitted the Dracula AI
   
 # Reminder
 - wikis
