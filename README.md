@@ -47,3 +47,4 @@
 # Reminder
 - wikis
 - teams group
+- blog
